@@ -1,68 +1,42 @@
-body {
-  background-color: #121212;
-  color: #ffffff;
-  font-family: Arial, sans-serif;
-  margin: 0;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-.login-container {
-  background-color: #1e1e1e;
-  padding: 2rem;
-  border-radius: 12px;
-  width: 320px;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-  text-align: center;
-}
+// 🔧 Supabase-Konfiguration – DEINE Daten einfügen:
+const SUPABASE_URL = 'https://your-project.supabase.co';
+const SUPABASE_ANON_KEY = 'your-anon-key';
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-.logo {
-  width: 80px;
-  margin-bottom: 1rem;
-}
+// UI-Elemente
+const emailInput = document.getElementById('email');
+const passwordInput = document.getElementById('password');
+const statusDiv = document.getElementById('status');
 
-.title {
-  margin-bottom: 1rem;
-}
+document.getElementById('login-button').addEventListener('click', async () => {
+  const email = emailInput.value;
+  const password = passwordInput.value;
 
-input {
-  width: 100%;
-  padding: 0.75rem;
-  margin: 0.5rem 0;
-  border-radius: 6px;
-  border: none;
-  background-color: #2a2a2a;
-  color: #ffffff;
-}
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
 
-input::placeholder {
-  color: #aaa;
-}
+  if (error) {
+    statusDiv.style.color = 'red';
+    statusDiv.textContent = 'Fehler beim Login: ' + error.message;
+  } else {
+    statusDiv.style.color = 'lightgreen';
+    statusDiv.textContent = 'Login erfolgreich!';
+  }
+});
 
-.buttons {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 1rem;
-}
+document.getElementById('register-button').addEventListener('click', async () => {
+  const email = emailInput.value;
+  const password = passwordInput.value;
 
-button {
-  width: 48%;
-  padding: 0.75rem;
-  background-color: #ffffff;
-  color: #000000;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
+  const { error } = await supabase.auth.signUp({ email, password });
 
-button:hover {
-  background-color: #ddd;
-}
+  if (error) {
+    statusDiv.style.color = 'red';
+    statusDiv.textContent = 'Fehler bei der Registrierung: ' + error.message;
+  } else {
+    statusDiv.style.color = 'lightgreen';
+    statusDiv.textContent = 'Registrierung erfolgreich! Bitte E-Mail bestätigen.';
+  }
+});
 
-.status {
-  margin-top: 1rem;
-  font-size: 0.9rem;
-  color: #ff5555;
-}
