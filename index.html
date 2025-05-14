@@ -7,29 +7,23 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="container">
+  <div class="login-container">
     <img src="logo.png" alt="Logo" class="logo" />
+    <h1 class="title">Willkommen</h1>
 
-    <h1>Willkommen</h1>
-
-    <div class="tabs">
-      <button onclick="switchForm('login')">Login</button>
-      <button onclick="switchForm('register')">Registrieren</button>
-    </div>
-
-    <form id="login-form" class="form">
-      <input type="email" id="login-email" placeholder="Email" required />
-      <input type="password" id="login-password" placeholder="Passwort" required />
+    <form id="auth-form">
+      <input type="email" id="email" placeholder="E-Mail" required />
+      <input type="password" id="password" placeholder="Passwort" required />
+      <div class="buttons">
+        <button type="button" id="login-button">Einloggen</button>
+        <button type="button" id="register-button">Registrieren</button>
+      </div>
     </form>
 
-    <form id="register-form" class="form hidden">
-      <input type="email" id="register-email" placeholder="Email" required />
-      <input type="password" id="register-password" placeholder="Passwort" required />
-    </form>
-
-    <div id="status"></div>
+    <div id="status" class="status"></div>
   </div>
 
   <script type="module" src="script.js"></script>
 </body>
 </html>
+
