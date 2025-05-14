@@ -3,27 +3,21 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login & Registrierung</title>
+  <title>Login</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="login-container">
+  <div class="container">
     <img src="logo.png" alt="Logo" class="logo" />
-    <h1 class="title">Willkommen</h1>
-
-    <form id="auth-form">
+    <h1>Login</h1>
+    <form id="login-form">
       <input type="email" id="email" placeholder="E-Mail" required />
       <input type="password" id="password" placeholder="Passwort" required />
-      <div class="buttons">
-        <button type="button" id="login-button">Einloggen</button>
-        <button type="button" id="register-button">Registrieren</button>
-      </div>
+      <button type="submit">Einloggen</button>
     </form>
-
-    <div id="status" class="status"></div>
+    <div id="status" class="status-message"></div>
   </div>
 
   <script type="module" src="script.js"></script>
 </body>
 </html>
-
