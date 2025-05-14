@@ -42,5 +42,11 @@ registerBtn.addEventListener('click', async () => {
 
   if (error) {
     statusDiv.style.color = 'red';
-    statusDiv.textContent = 'Registrierung fehlgeschlagen: ' + error.
+    statusDiv.textContent = 'Registrierung fehlgeschlagen: ' + error.message;
+  } else {
+    statusDiv.style.color = 'lightgreen';
+    statusDiv.textContent = 'Registrierung erfolgreich! Bitte E-Mail bestätigen.';
+  }
+});
+
 
