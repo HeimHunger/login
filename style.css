@@ -41,15 +41,20 @@ input::placeholder {
   color: #aaa;
 }
 
+.buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
 button {
-  width: 100%;
+  width: 48%;
   padding: 0.75rem;
   background-color: #ffffff;
   color: #000000;
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  margin-top: 0.5rem;
 }
 
 button:hover {
@@ -61,4 +66,3 @@ button:hover {
   font-size: 0.9rem;
   color: #ff5555;
 }
-
