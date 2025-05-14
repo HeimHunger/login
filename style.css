@@ -1,6 +1,6 @@
 body {
   background-color: #121212;
-  color: #fff;
+  color: #ffffff;
   font-family: Arial, sans-serif;
   display: flex;
   justify-content: center;
@@ -48,12 +48,13 @@ input::placeholder {
 .buttons {
   display: flex;
   justify-content: space-between;
+  gap: 10px;
 }
 
 button {
-  width: 48%;
+  flex: 1;
   padding: 0.75rem;
-  background-color: #fff;
+  background-color: #ffffff;
   color: #000;
   border: none;
   border-radius: 5px;
@@ -61,7 +62,7 @@ button {
 }
 
 button:hover {
-  background-color: #ddd;
+  background-color: #dddddd;
 }
 
 .status-message {
