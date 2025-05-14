@@ -1,26 +1,25 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-// Deine Supabase-Daten
-const SUPABASE_URL = 'https://your-project.supabase.co'
-const SUPABASE_ANON_KEY = 'your-anon-key'
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+const SUPABASE_URL = 'https://qqhrtpbazuupayhvelrm.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxaHJ0cGJhenV1cGF5aHZlbHJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjEyODgsImV4cCI6MjA2Mjc5NzI4OH0.wuT6wBQByGUwoUYyWE0cGBETE3AH2H5fYPYYFfSvznw';
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// Nutzer überprüfen
+const userInfo = document.getElementById('user-info');
+const logoutBtn = document.getElementById('logout-btn');
+
 async function checkUser() {
-  const { data: { user }, error } = await supabase.auth.getUser()
+  const { data, error } = await supabase.auth.getUser();
 
-  if (error || !user) {
-    // Kein Benutzer → zurück zum Login
-    window.location.href = 'index.html'
+  if (error || !data.user) {
+    window.location.href = 'index.html';
   } else {
-    document.getElementById('user-info').textContent = `Eingeloggt als: ${user.email}`
+    userInfo.textContent = `Eingeloggt als: ${data.user.email}`;
   }
 }
 
-// Logout
-document.getElementById('logout-btn').addEventListener('click', async () => {
-  await supabase.auth.signOut()
-  window.location.href = 'index.html'
-})
+logoutBtn.addEventListener('click', async () => {
+  await supabase.auth.signOut();
+  window.location.href = 'index.html';
+});
 
-checkUser()
+checkUser();
