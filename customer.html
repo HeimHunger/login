@@ -12,25 +12,35 @@
       margin: 0;
       padding: 0;
     }
-    .header {
+    header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 1rem 2rem;
-      background-color: #fff7f0;
+      padding: 1.2rem 2rem;
+      background-color: #fff3e7;
     }
-    .logo {
-      font-size: 1.8rem;
-      font-weight: bold;
-      color: #7a2e0b;
+    header a {
+      text-decoration: none;
+      display: flex;
+      align-items: center;
     }
-    .header button {
+    header img {
+      height: 60px;
+      margin-right: 0.8rem;
+    }
+    header h1 {
+      font-size: 1.5rem;
+      color: #5c2b10;
+      margin: 0;
+    }
+    header button {
       background-color: #a33d1e;
       color: white;
       border: none;
       padding: 0.6rem 1rem;
       border-radius: 10px;
       cursor: pointer;
+      margin-left: 0.5rem;
     }
     .container {
       max-width: 800px;
@@ -54,16 +64,31 @@
       margin-left: 0.5rem;
       color: #333;
     }
+    footer {
+      background: #fff3e7;
+      padding: 2rem;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+    footer a {
+      margin: 0 1rem;
+      color: #7a2e0b;
+      text-decoration: none;
+    }
   </style>
 </head>
 <body>
-  <div class="header">
-    <div class="logo">HeimHunger 🍲</div>
+
+  <header>
+    <a href="start.html">
+      <img src="logo.png" alt="Logo" />
+      <h1>HeimHunger</h1>
+    </a>
     <div>
       <button onclick="location.href='explore.html'">Zurück</button>
       <button onclick="logout()">Logout</button>
     </div>
-  </div>
+  </header>
 
   <div class="container">
     <h2>👋 Willkommen in deinem Bereich</h2>
@@ -73,12 +98,12 @@
     <div class="info"><span class="label">⭐ Mitglied seit:</span><span class="value">März 2025</span></div>
   </div>
 
-  <footer style="background:#fff3e7; padding: 2rem; text-align:center; font-size: 0.9rem;">
+  <footer>
     <p>&copy; 2025 HeimHunger – Heimisches Essen von Hobbyköchen zur Abholung.</p>
     <p>
-      <a href="agb.html" style="margin: 0 1rem; color:#7a2e0b;">AGB</a>
-      <a href="datenschutz.html" style="margin: 0 1rem; color:#7a2e0b;">Datenschutz</a>
-      <a href="impressum.html" style="margin: 0 1rem; color:#7a2e0b;">Impressum</a>
+      <a href="agb.html">AGB</a>
+      <a href="datenschutz.html">Datenschutz</a>
+      <a href="impressum.html">Impressum</a>
     </p>
   </footer>
 
@@ -101,12 +126,7 @@
       await supabase.auth.signOut()
       window.location.href = "index.html"
     }
-    <header style="display: flex; align-items: center; padding: 1.2rem; background-color: #fff3e7;">
-  <a href="start.html" style="text-decoration: none; display: flex; align-items: center;">
-    <img src="logo.png" alt="Logo" style="height: 60px; margin-right: 0.8rem;" />
-    <h1 style="font-size: 1.5rem; color: #5c2b10; margin: 0;">HeimHunger</h1>
-  </a>
-</header>
   </script>
+
 </body>
 </html>
