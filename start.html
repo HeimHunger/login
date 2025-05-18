@@ -2,9 +2,8 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Startseite</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Startseite – HeimHunger</title>
   <style>
     body {
       background-color: #1a1a1a;
@@ -59,6 +58,12 @@
       margin: 0 1rem;
       text-decoration: none;
     }
+
+    .welcome {
+      margin-top: 1rem;
+      font-size: 1.1rem;
+      color: #ccc;
+    }
   </style>
 </head>
 <body>
@@ -66,11 +71,8 @@
   <div class="container">
     <img src="logo.png" alt="Logo" class="logo" />
     <h1>🎉 Willkommen auf der Startseite!</h1>
-    <p>Du bist erfolgreich eingeloggt oder registriert.</p>
-
-    <button onclick="location.href='customer.html'" class="start-button">
-      Zum Kundenbereich
-    </button>
+    <p class="welcome" id="welcomeText">Lade Benutzerdaten…</p>
+    <button id="mainButton" class="start-button">...</button>
   </div>
 
   <footer>
@@ -82,5 +84,29 @@
     </p>
   </footer>
 
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+    const supabase = createClient(
+      'https://qqhrtpbazuupayhvelrm.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxaHJ0cGJhenV1cGF5aHZlbHJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjEyODgsImV4cCI6MjA2Mjc5NzI4OH0.wuT6wBQByGUwoUYyWE0cGBETE3AH2H5fYPYYFfSvznw'
+    )
+
+    const welcomeText = document.getElementById('welcomeText')
+    const mainButton = document.getElementById('mainButton')
+
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (user) {
+      const name = user.user_metadata?.name || user.email
+      welcomeText.textContent = `Hallo ${name}! Schön, dass du wieder da bist.`
+      mainButton.textContent = "Zum Kundenbereich"
+      mainButton.onclick = () => window.location.href = "customer.html"
+    } else {
+      welcomeText.textContent = "Du bist nicht eingeloggt."
+      mainButton.textContent = "Jetzt anmelden"
+      mainButton.onclick = () => window.location.href = "index.html"
+    }
+  </script>
 </body>
 </html>
