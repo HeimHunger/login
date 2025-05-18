@@ -60,6 +60,30 @@
       width: 100%;
     }
 
+    .top-meals {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1.2rem;
+      margin-bottom: 2rem;
+    }
+
+    .top-meals .card {
+      background:white;
+      border-radius:12px;
+      overflow:hidden;
+      box-shadow:0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .top-meals img {
+      width:100%;
+      height:140px;
+      object-fit:cover;
+    }
+
+    .top-meals .card div {
+      padding: 1rem;
+    }
+
     .filters {
       display: flex;
       gap: 1rem;
@@ -151,6 +175,45 @@
     </nav>
 
     <main>
+      <h2>🔥 Top-Gerichte der Woche</h2>
+      <div class="top-meals">
+        <div class="card">
+          <img src="https://www.stuttgartcooking.de/wp-content/uploads/2013/02/maultaschen-geschmelzt.jpg" alt="Maultaschen">
+          <div>
+            <strong style="color:#5c2b10;">Maultaschen geschmelzt</strong><br>
+            Hausgemacht mit Zwiebeln & Salat
+          </div>
+        </div>
+        <div class="card">
+          <img src="https://bestonlinecollegesdegrees.com/wp-content/uploads/2017/04/sauerbraten.jpg" alt="Sauerbraten">
+          <div>
+            <strong style="color:#5c2b10;">Sauerbraten</strong><br>
+            Mit Rotkohl & Klößen – 100 % Oma-Rezept
+          </div>
+        </div>
+        <div class="card">
+          <img src="https://eatsmarter.de/sites/default/files/styles/recipe/public/bratwurst-mit-sauerkraut-und-salzkartoffeln-0.jpg" alt="Bratwurst">
+          <div>
+            <strong style="color:#5c2b10;">Bratwurst mit Sauerkraut</strong><br>
+            Rustikal & frisch gekocht von Max
+          </div>
+        </div>
+        <div class="card">
+          <img src="https://dipsinfoesz.blogspot.com/2022/01/the-best-10-kasespatzle-mit-sahne.html" alt="Käsespätzle">
+          <div>
+            <strong style="color:#5c2b10;">Käsespätzle deluxe</strong><br>
+            Mit Sahnesoße & knusprigen Röstzwiebeln
+          </div>
+        </div>
+        <div class="card">
+          <img src="https://www.daskochrezept.de/sites/default/files/styles/recipe/public/2020-01/schwarzwalder-kirschtorte.jpg" alt="Kirschtorte">
+          <div>
+            <strong style="color:#5c2b10;">Schwarzwälder Kirschtorte</strong><br>
+            Süßes Highlight zum Mitnehmen 🍒
+          </div>
+        </div>
+      </div>
+
       <h2>Entdecke frische, heimische Gerichte 🍽️</h2>
       <div class="filters">
         <input type="text" id="searchInput" placeholder="Ort oder Gericht suchen..." />
