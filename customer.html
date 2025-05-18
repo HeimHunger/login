@@ -122,21 +122,15 @@
       <a href="customer.html">Mein Bereich</a>
       <a href="agb.html">AGB</a>
       <a href="datenschutz.html">Datenschutz</a>
-      <a href="index.html">🔒 Logout</a>
+      <a href="#" onclick="logout()">🔒 Logout</a>
     </nav>
 
     <main>
       <div class="container">
         <h2>👋 Willkommen in deinem Bereich</h2>
         <div class="info"><span class="label">📧 E-Mail:</span><span class="value" id="email">–</span></div>
-        <div class="info"><span class="label">👤 Name:</span><span class="value" id="name">–</span></div>
-        <div class="info"><span class="label">🏠 Straße:</span><span class="value" id="street">–</span></div>
-        <div class="info"><span class="label">🏠 Hausnummer:</span><span class="value" id="house_number">–</span></div>
-        <div class="info"><span class="label">🏙️ Stadt:</span><span class="value" id="city">–</span></div>
-        <div class="info"><span class="label">📮 PLZ:</span><span class="value" id="zip">–</span></div>
-        <div class="info"><span class="label">🌍 Land:</span><span class="value" id="country">–</span></div>
-        <div class="info"><span class="label">🛍️ Letzte Bestellung:</span><span class="value">Maultaschen mit Zwiebeln – 14.05.2025</span></div>
-        <div class="info"><span class="label">⭐ Mitglied seit:</span><span class="value">März 2025</span></div>
+        <div class="info"><span class="label">🏠 Adresse:</span><span class="value" id="adresse">–</span></div>
+        <div class="info"><span class="label">⭐ Mitglied seit:</span><span class="value" id="created">–</span></div>
         <button class="logout-btn" onclick="logout()">Logout</button>
       </div>
     </main>
@@ -156,21 +150,24 @@
 
     const supabase = createClient(
       'https://qqhrtpbazuupayhvelrm.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxaHJ0cGJhenV1cGF5aHZlbHJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjEyODgsImV4cCI6MjA2Mjc5NzI4OH0.wuT6wBQByGUwoUYyWE0cGBETE3AH2H5fYPYYFfSvznw'
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ey...'
     );
 
-    const { data: { user }, error } = await supabase.auth.getUser();
-    if (!user || !user.email_confirmed_at) {
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
       window.location.href = "index.html";
     } else {
-      const meta = user.user_metadata || {};
       document.getElementById('email').textContent = user.email;
-      document.getElementById('name').textContent = meta.name || '–';
-      document.getElementById('street').textContent = meta.street || '–';
-      document.getElementById('house_number').textContent = meta.house_number || '–';
-      document.getElementById('zip').textContent = meta.zip || '–';
-      document.getElementById('city').textContent = meta.city || '–';
-      document.getElementById('country').textContent = meta.country || '–';
+
+      const meta = user.user_metadata || {};
+      const address = `${meta.street || '–'} ${meta.house_number || ''}, ${meta.zip || ''} ${meta.city || ''}, ${meta.country || ''}`;
+      document.getElementById('adresse').textContent = address;
+
+      const createdDate = new Date(user.created_at).toLocaleDateString('de-DE', {
+        year: 'numeric', month: 'long'
+      });
+      document.getElementById('created').textContent = createdDate;
     }
 
     async function logout() {
@@ -182,5 +179,6 @@
 
     window.logout = logout;
   </script>
+
 </body>
 </html>
