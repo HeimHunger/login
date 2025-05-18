@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Registrieren – HeimHunger</title>
+  <style>
+    body {
+      background-color: #fce9dc;
+      color: #3b1f0b;
+      font-family: Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background-color: #fff3e7;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 420px;
+    }
+    input, select {
+      width: 100%;
+      margin-bottom: 1rem;
+      padding: 0.8rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+    button {
+      width: 100%;
+      background-color: #a33d1e;
+      color: white;
+      border: none;
+      padding: 0.8rem;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .status {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Registrieren bei HeimHunger</h2>
+    <form id="register-form">
+      <input type="text" id="name" placeholder="Vollständiger Name" required />
+      <input type="email" id="email" placeholder="E-Mail-Adresse" required />
+      <input type="password" id="password" placeholder="Passwort" required />
+      <input type="text" id="address" placeholder="Adresse" required />
+      <select id="country" required>
+        <option value="Deutschland">Deutschland</option>
+      </select>
+      <button type="submit">Registrieren</button>
+      <div class="status" id="status"></div>
+    </form>
+  </div>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+    const supabase = createClient(
+      'https://qqhrtpbazuupayhvelrm.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxaHJ0cGJhenV1cGF5aHZlbHJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjEyODgsImV4cCI6MjA2Mjc5NzI4OH0.wuT6wBQByGUwoUYyWE0cGBETE3AH2H5fYPYYFfSvznw'
+    )
+
+    const form = document.getElementById('register-form');
+    const status = document.getElementById('status');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const address = document.getElementById('address').value;
+      const country = document.getElementById('country').value;
+
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            name,
+            address,
+            country
+          }
+        }
+      });
+
+      if (error) {
+        status.textContent = "❌ Fehler bei der Registrierung.";
+        status.style.color = "red";
+      } else {
+        status.textContent = "✅ Registrierung erfolgreich! Bitte E-Mail bestätigen.";
+        status.style.color = "green";
+        form.reset();
+      }
+    });
+  </script>
+
+</body>
+</html>
