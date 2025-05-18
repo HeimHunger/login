@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HeimHunger - Gerichte entdecken</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body { background: #121212; color: #fff; font-family: Arial, sans-serif; margin: 0; padding: 1rem; }
+    .header { display: flex; align-items: center; justify-content: space-between; }
+    .logo { font-size: 1.5rem; font-weight: bold; }
+    .banner { width: 100%; height: 200px; background: url('https://source.unsplash.com/1200x300/?food') center/cover no-repeat; border-radius: 10px; margin: 1rem 0; }
+    .filters { display: flex; gap: 1rem; align-items: center; margin: 1rem 0; }
+    .meal-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; }
+    .meal-card { background: #1f1f1f; border-radius: 10px; overflow: hidden; box-shadow: 0 0 10px rgba(0,0,0,0.3); }
+    .meal-card img { width: 100%; height: 180px; object-fit: cover; }
+    .meal-card .content { padding: 1rem; }
+    .meal-card .title { font-size: 1.2rem; font-weight: bold; }
+    .meal-card .price { color: #6ee7b7; margin-top: 0.5rem; }
+    .meal-card .desc { margin-top: 0.5rem; color: #ccc; }
+    .meal-card .time { font-size: 0.9rem; margin-top: 0.5rem; color: #aaa; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">HeimHunger</div>
+    <div><button onclick="location.href='start.html'">Zurück</button></div>
+  </div>
+  <div class="banner"></div>
+
+  <div class="filters">
+    <input type="text" id="searchInput" placeholder="Ort oder Gericht suchen..." />
+    <select id="sortSelect">
+      <option value="name">Sortieren nach Name</option>
+      <option value="price">Sortieren nach Preis</option>
+      <option value="pickup_time">Sortieren nach Zeit</option>
+    </select>
+  </div>
+
+  <div class="meal-list" id="mealList"></div>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+    const supabaseUrl = 'https://qqhrtpbazuupayhvelrm.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxaHJ0cGJhenV1cGF5aHZlbHJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjEyODgsImV4cCI6MjA2Mjc5NzI4OH0.wuT6wBQByGUwoUYyWE0cGBETE3AH2H5fYPYYFfSvznw';
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    async function fetchMeals() {
+      const { data, error } = await supabase
+        .from('meals')
+        .select('*');
+
+      if (error) {
+        document.getElementById('mealList').innerHTML = 'Fehler beim Laden der Gerichte';
+        return;
+      }
+
+      renderMeals(data);
+    }
+
+    function renderMeals(meals) {
+      const container = document.getElementById('mealList');
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      const sortBy = document.getElementById('sortSelect').value;
+
+      const filtered = meals
+        .filter(m => m.name.toLowerCase().includes(search) || m.description.toLowerCase().includes(search))
+        .sort((a, b) => (a[sortBy] > b[sortBy]) ? 1 : -1);
+
+      container.innerHTML = filtered.map(meal => `
+        <div class="meal-card">
+          <img src="${meal.image_url}" alt="${meal.name}" />
+          <div class="content">
+            <div class="title">${meal.name}</div>
+            <div class="price">€ ${meal.price.toFixed(2)}</div>
+            <div class="desc">${meal.description}</div>
+            <div class="time">Abholung: ${new Date(meal.pickup_time).toLocaleString()}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    document.getElementById('searchInput').addEventListener('input', fetchMeals);
+    document.getElementById('sortSelect').addEventListener('change', fetchMeals);
+
+    fetchMeals();
+  </script>
+</body>
+</html>
