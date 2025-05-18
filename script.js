@@ -1,3 +1,4 @@
+
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
 const SUPABASE_URL = 'https://qqhrtpbazuupayhvelrm.supabase.co';
@@ -10,7 +11,6 @@ const emailInput = document.getElementById('email');
 const passwordInput = document.getElementById('password');
 const statusDiv = document.getElementById('status');
 const resetLink = document.getElementById('reset-link');
-
 const loginBtn = document.getElementById('login-btn');
 const registerBtn = document.getElementById('register-btn');
 
@@ -21,25 +21,28 @@ form.addEventListener('submit', async (e) => {
   const email = emailInput.value;
   const password = passwordInput.value;
 
-  const { error: loginError } = await supabase.auth.signInWithPassword({ email, password });
+  const { data, error: loginError } = await supabase.auth.signInWithPassword({ email, password });
 
   if (loginError) {
+    if (loginError.message.toLowerCase().includes('email not confirmed')) {
+      statusDiv.style.color = 'red';
+      statusDiv.textContent = '❌ Deine E-Mail-Adresse ist noch nicht bestätigt.';
+    } else {
+      statusDiv.style.color = 'red';
+      statusDiv.textContent = '❌ Login fehlgeschlagen: ' + loginError.message;
+    }
+    return;
+  }
+
+  if (!data.session || !data.session.user.email_confirmed_at) {
     statusDiv.style.color = 'red';
-    statusDiv.textContent = 'Login fehlgeschlagen: ' + loginError.message;
+    statusDiv.textContent = '❌ Deine E-Mail-Adresse ist noch nicht bestätigt.';
     return;
   }
 
   statusDiv.style.color = 'lightgreen';
-  statusDiv.textContent = 'Login erfolgreich! Weiterleitung...';
-
-  // Session abwarten, bevor weitergeleitet wird
-  const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-  if (!sessionError && sessionData.session) {
-    window.location.href = 'start.html';
-  } else {
-    statusDiv.style.color = 'orange';
-    statusDiv.textContent = 'Login war erfolgreich, aber keine aktive Session gefunden.';
-  }
+  statusDiv.textContent = '✅ Login erfolgreich! Weiterleitung...';
+  window.location.href = 'start.html';
 });
 
 // Registrierung
@@ -47,39 +50,29 @@ registerBtn.addEventListener('click', async () => {
   const email = emailInput.value;
   const password = passwordInput.value;
 
-  const { error: signUpError } = await supabase.auth.signUp({ email, password });
+  const { error: signUpError } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      emailRedirectTo: 'https://login-chi-blond.vercel.app/index.html'
+    }
+  });
 
   if (signUpError) {
     statusDiv.style.color = 'red';
-    statusDiv.textContent = 'Registrierung fehlgeschlagen: ' + signUpError.message;
-    return;
-  }
-
-  const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
-
-  if (signInError) {
-    statusDiv.style.color = 'orange';
-    statusDiv.textContent = 'Registriert, aber Login fehlgeschlagen: ' + signInError.message;
-    return;
-  }
-
-  statusDiv.style.color = 'lightgreen';
-  statusDiv.textContent = 'Registrierung & Login erfolgreich! Weiterleitung...';
-
-  const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-  if (!sessionError && sessionData.session) {
-    window.location.href = 'start.html';
+    statusDiv.textContent = '❌ Registrierung fehlgeschlagen: ' + signUpError.message;
   } else {
-    statusDiv.textContent = 'Registrierung erfolgreich, aber keine aktive Session gefunden.';
+    statusDiv.style.color = 'green';
+    statusDiv.textContent = '✅ Registrierung erfolgreich! Bitte bestätige deine E-Mail-Adresse.';
   }
 });
 
 // Passwort vergessen
-resetLink.addEventListener('click', async () => {
+resetLink?.addEventListener('click', async () => {
   const email = emailInput.value;
   if (!email) {
     statusDiv.style.color = 'red';
-    statusDiv.textContent = 'Bitte gib zuerst deine E-Mail ein.';
+    statusDiv.textContent = '❌ Bitte gib zuerst deine E-Mail ein.';
     return;
   }
 
@@ -89,9 +82,9 @@ resetLink.addEventListener('click', async () => {
 
   if (error) {
     statusDiv.style.color = 'red';
-    statusDiv.textContent = 'Fehler beim Senden des Links: ' + error.message;
+    statusDiv.textContent = '❌ Fehler beim Senden des Links: ' + error.message;
   } else {
     statusDiv.style.color = 'lightgreen';
-    statusDiv.textContent = 'Passwort-Reset-Link gesendet!';
+    statusDiv.textContent = '✅ Passwort-Reset-Link gesendet!';
   }
 });
