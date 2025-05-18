@@ -3,37 +3,129 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HeimHunger - Gerichte entdecken</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>HeimHunger – Gerichte entdecken</title>
   <style>
-    body { background: #121212; color: #fff; font-family: Arial, sans-serif; margin: 0; padding: 1rem; }
-    .header { display: flex; align-items: center; justify-content: space-between; }
-    .logo { font-size: 1.5rem; font-weight: bold; }
-    .banner { width: 100%; height: 200px; background: url('https://source.unsplash.com/1200x300/?food') center/cover no-repeat; border-radius: 10px; margin: 1rem 0; }
-    .filters { display: flex; gap: 1rem; align-items: center; margin: 1rem 0; }
-    .meal-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; }
-    .meal-card { background: #1f1f1f; border-radius: 10px; overflow: hidden; box-shadow: 0 0 10px rgba(0,0,0,0.3); }
-    .meal-card img { width: 100%; height: 180px; object-fit: cover; }
-    .meal-card .content { padding: 1rem; }
-    .meal-card .title { font-size: 1.2rem; font-weight: bold; }
-    .meal-card .price { color: #6ee7b7; margin-top: 0.5rem; }
-    .meal-card .desc { margin-top: 0.5rem; color: #ccc; }
-    .meal-card .time { font-size: 0.9rem; margin-top: 0.5rem; color: #aaa; }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom right, #2e0505, #3b1f1f);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .header {
+      width: 100%;
+      max-width: 1200px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #facc15;
+    }
+
+    .banner {
+      width: 100%;
+      max-width: 1200px;
+      height: 250px;
+      background: url('https://images.unsplash.com/photo-1504674900247-0877df9cc836') center/cover no-repeat;
+      border-radius: 10px;
+      margin-bottom: 1.5rem;
+    }
+
+    .filters {
+      width: 100%;
+      max-width: 1200px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    input, select {
+      padding: 0.5rem;
+      border-radius: 5px;
+      border: none;
+      outline: none;
+      background: #2e2e2e;
+      color: #fff;
+    }
+
+    .meal-list {
+      width: 100%;
+      max-width: 1200px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+      padding-bottom: 3rem;
+    }
+
+    .meal-card {
+      background: #1a1a1a;
+      border-radius: 10px;
+      overflow: hidden;
+      transition: transform 0.2s ease;
+      box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    }
+
+    .meal-card:hover {
+      transform: scale(1.02);
+    }
+
+    .meal-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+
+    .content {
+      padding: 1rem;
+    }
+
+    .title {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-bottom: 0.3rem;
+    }
+
+    .price {
+      color: #facc15;
+      font-weight: bold;
+    }
+
+    .desc {
+      margin-top: 0.5rem;
+      font-size: 0.95rem;
+      color: #d1d1d1;
+    }
+
+    .time {
+      font-size: 0.85rem;
+      margin-top: 0.5rem;
+      color: #bbb;
+    }
   </style>
 </head>
 <body>
   <div class="header">
-    <div class="logo">HeimHunger</div>
-    <div><button onclick="location.href='start.html'">Zurück</button></div>
+    <div class="logo">HeimHunger 🍲</div>
+    <button onclick="location.href='start.html'">Zurück</button>
   </div>
+
   <div class="banner"></div>
 
   <div class="filters">
-    <input type="text" id="searchInput" placeholder="Ort oder Gericht suchen..." />
+    <input type="text" id="searchInput" placeholder="Ort oder Gericht suchen...">
     <select id="sortSelect">
       <option value="name">Sortieren nach Name</option>
       <option value="price">Sortieren nach Preis</option>
-      <option value="pickup_time">Sortieren nach Zeit</option>
+      <option value="pickup_time">Sortieren nach Abholzeit</option>
     </select>
   </div>
 
