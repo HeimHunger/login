@@ -62,16 +62,10 @@
 
   <nav>
     <h1>🍲 HeimHunger</h1>
-    <a href="explore.html">Gerichte entdecken</a>
-    <a href="upload.html">Gericht posten</a>
-    <a href="customer.html">Mein Bereich</a>
-    <a href="agb.html">AGB</a>
-    <a href="datenschutz.html">Datenschutz</a>
-    <a href="#" onclick="logout()">🚪 Logout</a>
+    <div id="sidebar-links"></div>
   </nav>
 
   <main>
-    <!-- DEIN INDIVIDUELLER SEITENINHALT KOMMT HIER HIN -->
     <h2>Willkommen bei HeimHunger 👋</h2>
     <p>Dies ist eine Demo-Seite mit einheitlichem Sidebar-Menü.</p>
   </main>
@@ -90,14 +84,32 @@
 
     const supabase = createClient(
       'https://qqhrtpbazuupayhvelrm.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxaHJ0cGJhenV1cGF5aHZlbHJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjEyODgsImV4cCI6MjA2Mjc5NzI4OH0.wuT6wBQByGUwoUYyWE0cGBETE3AH2H5fYPYYFfSvznw'
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ey...'
     )
 
-    async function logout() {
-      await supabase.auth.signOut()
-      window.location.href = "index.html"
-    }
-  </script>
+    const userCheck = await supabase.auth.getUser();
+    const isLoggedIn = !!userCheck.data.user;
 
+    const sidebar = document.getElementById('sidebar-links');
+    if (sidebar) {
+      sidebar.innerHTML = `
+        <a href="explore.html">Gerichte entdecken</a>
+        <a href="post.html">Gericht posten</a>
+        <a href="customer.html">Mein Bereich</a>
+        <a href="agb.html">AGB</a>
+        <a href="datenschutz.html">Datenschutz</a>
+        ${isLoggedIn
+          ? `<a href="#" onclick="logout()">🔒 Logout</a>`
+          : `<a href="index.html">🔑 Anmelden</a>`}
+      `;
+    }
+
+    window.logout = async function () {
+      await supabase.auth.signOut();
+      localStorage.clear();
+      sessionStorage.clear();
+      window.location.href = "index.html";
+    };
+  </script>
 </body>
 </html>
