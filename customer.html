@@ -154,7 +154,6 @@
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxaHJ0cGJhenV1cGF5aHZlbHJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjEyODgsImV4cCI6MjA2Mjc5NzI4OH0.wuT6wBQByGUwoUYyWE0cGBETE3AH2H5fYPYYFfSvznw'
     );
 
-    // Login-Check
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       window.location.href = "index.html";
@@ -168,6 +167,9 @@
       sessionStorage.clear();
       window.location.href = "index.html";
     }
+
+    // 🔓 Macht logout() global verfügbar für onclick
+    window.logout = logout;
   </script>
 </body>
 </html>
