@@ -1,3 +1,13 @@
+// supabaseClient.js
+// Lege diese Datei ins gleichen Ordner wie deine HTML-Dateien
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+export const supabase = createClient(
+  'https://qqhrtpbazuupayhvelrm.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxaHJ0cGJhenV1cGF5aHZlbHJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjEyODgsImV4cCI6MjA2Mjc5NzI4OH0.wuT6wBQByGUwoUYyWE0cGBETE3AH2H5fYPYYFfSvznw'
+);
+
+// post.html
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -113,19 +123,17 @@
   </footer>
 
   <script type="module">
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-    const supabase = createClient(
-      'https://qqhrtpbazuupayhvelrm.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxaHJ0cGJhenV1cGF5aHZlbHJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjEyODgsImV4cCI6MjA2Mjc5NzI4OH0.wuT6wBQByGUwoUYyWE0cGBETE3AH2H5fYPYYFfSvznw'
-    );
+    import { supabase } from './supabaseClient.js';
 
     // Session prüfen
     const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    console.log('getSession():', session, sessionError);
+    console.log('localStorage keys:', Object.keys(localStorage));
     if (sessionError) console.error(sessionError.message);
-    if (!session) window.location.href = 'index.html';
+    if (!session) return window.location.href = 'index.html';
     const user = session.user;
 
-    // Sidebar
+    // Sidebar dynamisch befüllen
     const sidebar = document.getElementById('sidebar-links');
     sidebar.innerHTML = session
       ? `
@@ -136,16 +144,17 @@
         <a href="datenschutz.html">Datenschutz</a>
         <button id="logout">🔒 Logout</button>
       `
-      : `<a href="index.html">Anmelden</a>
-         <a href="explore.html">Gerichte entdecken</a>
-         <a href="agb.html">AGB</a>
-         <a href="datenschutz.html">Datenschutz</a>`;
+      : `
+        <a href="index.html">Anmelden</a>
+        <a href="explore.html">Gerichte entdecken</a>
+        <a href="agb.html">AGB</a>
+        <a href="datenschutz.html">Datenschutz</a>
+      `;
     if (session) document.getElementById('logout').addEventListener('click', async () => {
-      await supabase.auth.signOut();
-      window.location.href = 'index.html';
+      await supabase.auth.signOut(); window.location.href = 'index.html';
     });
 
-    // Form-Handling
+    // Formular-Handling
     const form = document.getElementById('mealForm');
     const statusEl = document.getElementById('status');
     form.addEventListener('submit', async e => {
@@ -160,7 +169,7 @@
       }
       const meta = user.user_metadata;
       const address = `${meta.street} ${meta.house_number}, ${meta.zip} ${meta.city}, ${meta.country}`;
-      const geoUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=GOOGLE_API_KEY`;
+      const geoUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=AIzaSyAZvGocBAsVTSOcAe_Qe2Kx8tF83BeN4U4`;
       try {
         const geoRes = await fetch(geoUrl);
         const geoData = await geoRes.json();
