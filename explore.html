@@ -15,8 +15,8 @@
       background-color: #fce9dc;
       color: #3b1f0b;
       display: flex;
-      min-height: 100vh;
       flex-direction: column;
+      min-height: 100vh;
     }
 
     .banner {
@@ -60,6 +60,13 @@
       width: 100%;
     }
 
+    .user-greeting {
+      text-align: right;
+      margin-bottom: 1rem;
+      font-weight: bold;
+      color: #5c2b10;
+    }
+
     .top-meals {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -68,16 +75,16 @@
     }
 
     .top-meals .card {
-      background:white;
-      border-radius:12px;
-      overflow:hidden;
-      box-shadow:0 2px 8px rgba(0,0,0,0.08);
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     }
 
     .top-meals img {
-      width:100%;
-      height:140px;
-      object-fit:cover;
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
     }
 
     .top-meals .card div {
@@ -149,7 +156,6 @@
       padding: 2rem;
       text-align: center;
       font-size: 0.9rem;
-      margin-top: auto;
     }
 
     footer a {
@@ -166,49 +172,46 @@
   <div class="main-wrapper">
     <nav>
       <h1>HeimHunger 🍲</h1>
-      <a href="explore.html">Gerichte entdecken</a>
-      <a href="post.html">Gericht posten</a>
-      <a href="customer.html">Mein Bereich</a>
-      <a href="agb.html">AGB</a>
-      <a href="datenschutz.html">Datenschutz</a>
-      <a href="index.html">🔒 Logout</a>
+      <div id="sidebar-links"></div>
     </nav>
 
     <main>
+      <div class="user-greeting" id="greeting"></div>
+
       <h2>🔥 Top-Gerichte der Woche</h2>
       <div class="top-meals">
         <div class="card">
           <img src="https://www.kochform.de/ab/rezepte/1026/Maultaschenpfanne_LB1.jpg">
           <div>
-            <strong style="color:#5c2b10;">Maultaschen geschmelzt</strong><br>
+            <strong>Maultaschen geschmelzt</strong><br>
             Hausgemacht mit Zwiebeln & Salat
           </div>
         </div>
         <div class="card">
           <img src="https://image.essen-und-trinken.de/11916862/t/qM/v8/w1440/r1/-/sauerbraten-a9bb7109a5987231f2dc9fa1e251149d-et2012110921-jpg--6089-.jpg">
           <div>
-            <strong style="color:#5c2b10;">Sauerbraten</strong><br>
+            <strong>Sauerbraten</strong><br>
             Mit Rotkohl & Klößen – 100 % Oma-Rezept
           </div>
         </div>
         <div class="card">
           <img src="https://d3sogz1xcg542t.cloudfront.net/media/image/dd/34/fa/Bratwurst-mit-Sauerkraut-und-Kartoffelstampf-4-3_1920x1920.jpg">
           <div>
-            <strong style="color:#5c2b10;">Bratwurst mit Sauerkraut</strong><br>
+            <strong>Bratwurst mit Sauerkraut</strong><br>
             Rustikal & frisch gekocht von Max
           </div>
         </div>
         <div class="card">
           <img src="https://image.essen-und-trinken.de/13578662/t/53/v4/w960/r1/-/fjt2021110130-kaesespaetzle-mit-speck.jpg">
           <div>
-            <strong style="color:#5c2b10;">Käsespätzle deluxe</strong><br>
+            <strong>Käsespätzle deluxe</strong><br>
             Mit Sahnesoße & knusprigen Röstzwiebeln
           </div>
         </div>
         <div class="card">
           <img src="https://img.chefkoch-cdn.de/rezepte/463131139405875/bilder/1369608/crop-960x720/schwarzwaelder-kirschtorte-super-easy.jpg">
           <div>
-            <strong style="color:#5c2b10;">Schwarzwälder Kirschtorte</strong><br>
+            <strong>Schwarzwälder Kirschtorte</strong><br>
             Süßes Highlight zum Mitnehmen 🍒
           </div>
         </div>
@@ -241,9 +244,37 @@
 
     const supabase = createClient(
       'https://qqhrtpbazuupayhvelrm.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxaHJ0cGJhenV1cGF5aHZlbHJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjEyODgsImV4cCI6MjA2Mjc5NzI4OH0.wuT6wBQByGUwoUYyWE0cGBETE3AH2H5fYPYYFfSvznw'
-    )
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ey...'
+    );
 
+    // Sidebar dynamisch
+    const { data: { user } } = await supabase.auth.getUser();
+    const sidebar = document.getElementById('sidebar-links');
+    const greeting = document.getElementById('greeting');
+
+    if (user) {
+      greeting.textContent = `👋 Hallo, ${user.user_metadata?.name || user.email}`;
+      sidebar.innerHTML = `
+        <a href="explore.html">Gerichte entdecken</a>
+        <a href="post.html">Gericht posten</a>
+        <a href="customer.html">Mein Bereich</a>
+        <a href="agb.html">AGB</a>
+        <a href="datenschutz.html">Datenschutz</a>
+        <a href="#" onclick="logout()">🔒 Logout</a>`;
+    } else {
+      sidebar.innerHTML = `
+        <a href="explore.html">Gerichte entdecken</a>
+        <a href="agb.html">AGB</a>
+        <a href="datenschutz.html">Datenschutz</a>
+        <a href="index.html">🔑 Anmelden</a>`;
+    }
+
+    async function logout() {
+      await supabase.auth.signOut();
+      window.location.href = "index.html";
+    }
+
+    // Gerichte laden
     async function fetchMeals() {
       const { data, error } = await supabase.from('meals').select('*');
       if (error) {
