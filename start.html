@@ -5,25 +5,82 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Startseite</title>
   <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      background-color: #1a1a1a;
+      color: white;
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 100vh;
+    }
+
+    .container {
+      background-color: #222;
+      border-radius: 12px;
+      padding: 2rem;
+      text-align: center;
+      margin-top: 3rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+
+    .logo {
+      height: 80px;
+      margin-bottom: 1rem;
+    }
+
+    .start-button {
+      background-color: #5c2b10;
+      color: white;
+      padding: 0.8rem 1.4rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      margin-top: 2rem;
+      cursor: pointer;
+    }
+
+    footer {
+      background: #fff3e7;
+      color: #3b1f0b;
+      padding: 2rem;
+      text-align: center;
+      font-size: 0.9rem;
+      width: 100%;
+      margin-top: auto;
+    }
+
+    footer a {
+      color: #7a2e0b;
+      margin: 0 1rem;
+      text-decoration: none;
+    }
+  </style>
 </head>
 <body>
+
   <div class="container">
     <img src="logo.png" alt="Logo" class="logo" />
     <h1>🎉 Willkommen auf der Startseite!</h1>
     <p>Du bist erfolgreich eingeloggt oder registriert.</p>
+
+    <button onclick="location.href='customer.html'" class="start-button">
+      Zum Kundenbereich
+    </button>
   </div>
-  <div style="margin-top: 2rem;">
-  <button onclick="location.href='customer.html'" style="background-color: #5c2b10; color: white; padding: 0.7rem 1.2rem; border: none; border-radius: 8px; cursor: pointer;">
-    Zum Kundenbereich
-  </button>
-</div>
-<footer style="background:#fff3e7; padding: 2rem; text-align:center; font-size: 0.9rem;">
-  <p>&copy; 2025 HeimHunger – Heimisches Essen von Hobbyköchen zur Abholung.</p>
-  <p>
-    <a href="agb.html" style="margin: 0 1rem; color:#7a2e0b;">AGB</a>
-    <a href="datenschutz.html" style="margin: 0 1rem; color:#7a2e0b;">Datenschutz</a>
-    <a href="impressum.html" style="margin: 0 1rem; color:#7a2e0b;">Impressum</a>
-  </p>
-</footer>
+
+  <footer>
+    <p>&copy; 2025 HeimHunger – Heimisches Essen von Hobbyköchen zur Abholung.</p>
+    <p>
+      <a href="agb.html">AGB</a>
+      <a href="datenschutz.html">Datenschutz</a>
+      <a href="impressum.html">Impressum</a>
+    </p>
+  </footer>
+
 </body>
 </html>
