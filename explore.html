@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>HeimHunger – Gerichte entdecken</title>
   <style>
-    * { box-sizing: border-box; }
-
+    * {
+      box-sizing: border-box;
+    }
     body {
       margin: 0;
       font-family: Arial, sans-serif;
@@ -15,10 +16,11 @@
       display: flex;
     }
 
+    /* Sidebar */
     nav {
       width: 220px;
-      background-color: #fff3e7;
       height: 100vh;
+      background-color: #fff3e7;
       padding: 2rem 1rem;
       position: fixed;
       top: 0;
@@ -43,28 +45,20 @@
       text-decoration: underline;
     }
 
+    /* Content wrapper (nach Sidebar) */
     .content-wrapper {
       margin-left: 220px;
       width: calc(100% - 220px);
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
     }
 
     .banner {
       width: 100%;
-      height: 220px;
+      height: 250px;
       background: url('https://source.unsplash.com/1600x400/?home-cooked-meal,food') center/cover no-repeat;
     }
 
     main {
       padding: 2rem;
-      flex: 1;
-    }
-
-    h2 {
-      margin-top: 0;
-      margin-bottom: 1rem;
     }
 
     .filters {
