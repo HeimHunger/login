@@ -3,13 +3,73 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login & Registrierung</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>Login – HeimHunger</title>
+  <style>
+    body {
+      background-color: #1a1a1a;
+      color: white;
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background-color: #222;
+      border-radius: 12px;
+      padding: 2rem;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+
+    .logo {
+      height: 70px;
+      margin-bottom: 1rem;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    input {
+      padding: 0.8rem;
+      border-radius: 8px;
+      border: none;
+      font-size: 1rem;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    button {
+      padding: 0.7rem 1.2rem;
+      border-radius: 8px;
+      background-color: #5c2b10;
+      color: white;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .status-message {
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
   <div class="container">
     <img src="logo.png" alt="Logo" class="logo" />
-    <h1>Willkommen</h1>
+    <h1>Login</h1>
 
     <form id="auth-form">
       <input type="email" id="email" placeholder="E-Mail" required />
@@ -23,6 +83,40 @@
     <div id="status" class="status-message"></div>
   </div>
 
-  <script type="module" src="script.js"></script>
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+    const supabase = createClient(
+      'https://qqhrtpbazuupayhvelrm.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxaHJ0cGJhenV1cGF5aHZlbHJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjEyODgsImV4cCI6MjA2Mjc5NzI4OH0.wuT6wBQByGUwoUYyWE0cGBETE3AH2H5fYPYYFfSvznw'
+    )
+
+    const form = document.getElementById('auth-form')
+    const status = document.getElementById('status')
+    const registerBtn = document.getElementById('register-btn')
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault()
+      const email = document.getElementById('email').value
+      const password = document.getElementById('password').value
+
+      const { error } = await supabase.auth.signInWithPassword({ email, password })
+
+      if (error) {
+        status.textContent = "❌ Login fehlgeschlagen"
+        status.style.color = "red"
+      } else {
+        status.textContent = "✅ Login erfolgreich"
+        status.style.color = "green"
+        setTimeout(() => {
+          window.location.href = "start.html"
+        }, 1000)
+      }
+    })
+
+    registerBtn.addEventListener('click', () => {
+      window.location.href = "registration.html"
+    })
+  </script>
 </body>
 </html>
