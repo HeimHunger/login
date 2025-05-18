@@ -29,14 +29,22 @@
       color: #5c2b10;
       margin-bottom: 2rem;
     }
-    nav a {
+    nav a,
+    nav button {
       display: block;
       margin: 1rem 0;
       color: #7a2e0b;
+      background: none;
+      border: none;
+      padding: 0;
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
       text-decoration: none;
       font-weight: bold;
     }
-    nav a:hover {
+    nav a:hover,
+    nav button:hover {
       text-decoration: underline;
     }
     main {
@@ -85,31 +93,38 @@
     const supabase = createClient(
       'https://qqhrtpbazuupayhvelrm.supabase.co',
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ey...'
-    )
+    );
 
-    const userCheck = await supabase.auth.getUser();
-    const isLoggedIn = !!userCheck.data.user;
-
+    const { data: { user } } = await supabase.auth.getUser();
+    const isLoggedIn = !!user;
     const sidebar = document.getElementById('sidebar-links');
+
     if (sidebar) {
-      sidebar.innerHTML = `
-        <a href="explore.html">Gerichte entdecken</a>
-        <a href="post.html">Gericht posten</a>
-        <a href="customer.html">Mein Bereich</a>
-        <a href="agb.html">AGB</a>
-        <a href="datenschutz.html">Datenschutz</a>
-        ${isLoggedIn
-          ? `<a href="#" onclick="logout()">🔒 Logout</a>`
-          : `<a href="index.html">🔑 Anmelden</a>`}
-      `;
+      if (isLoggedIn) {
+        sidebar.innerHTML = `
+          <a href="explore.html">Gerichte entdecken</a>
+          <a href="post.html">Gericht posten</a>
+          <a href="customer.html">Mein Bereich</a>
+          <a href="agb.html">AGB</a>
+          <a href="datenschutz.html">Datenschutz</a>
+          <button id="logout-btn">🔒 Logout</button>
+        `;
+      } else {
+        sidebar.innerHTML = `
+          <a href="explore.html">Gerichte entdecken</a>
+          <a href="agb.html">AGB</a>
+          <a href="datenschutz.html">Datenschutz</a>
+          <a href="index.html">🔑 Anmelden</a>
+        `;
+      }
     }
 
-    window.logout = async function () {
+    document.getElementById('logout-btn')?.addEventListener('click', async () => {
       await supabase.auth.signOut();
       localStorage.clear();
       sessionStorage.clear();
       window.location.href = "index.html";
-    };
+    });
   </script>
 </body>
 </html>
