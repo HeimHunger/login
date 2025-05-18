@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HeimHunger</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      display: flex;
+      font-family: Arial, sans-serif;
+      background-color: #fce9dc;
+      color: #3b1f0b;
+    }
+    nav {
+      width: 220px;
+      height: 100vh;
+      background-color: #fff3e7;
+      padding: 2rem 1rem;
+      position: fixed;
+      top: 0;
+      left: 0;
+    }
+    nav h1 {
+      font-size: 1.6rem;
+      color: #5c2b10;
+      margin-bottom: 2rem;
+    }
+    nav a {
+      display: block;
+      margin: 1rem 0;
+      color: #7a2e0b;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+    main {
+      margin-left: 220px;
+      padding: 2rem;
+      width: calc(100% - 220px);
+    }
+    footer {
+      margin-left: 220px;
+      background: #fff3e7;
+      padding: 2rem;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+    footer a {
+      margin: 0 1rem;
+      color: #7a2e0b;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <h1>🍲 HeimHunger</h1>
+    <a href="explore.html">Gerichte entdecken</a>
+    <a href="upload.html">Gericht posten</a>
+    <a href="customer.html">Mein Bereich</a>
+    <a href="agb.html">AGB</a>
+    <a href="datenschutz.html">Datenschutz</a>
+    <a href="#" onclick="logout()">🚪 Logout</a>
+  </nav>
+
+  <main>
+    <!-- DEIN INDIVIDUELLER SEITENINHALT KOMMT HIER HIN -->
+    <h2>Willkommen bei HeimHunger 👋</h2>
+    <p>Dies ist eine Demo-Seite mit einheitlichem Sidebar-Menü.</p>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 HeimHunger – Heimisches Essen von Hobbyköchen zur Abholung.</p>
+    <p>
+      <a href="agb.html">AGB</a>
+      <a href="datenschutz.html">Datenschutz</a>
+      <a href="impressum.html">Impressum</a>
+    </p>
+  </footer>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+    const supabase = createClient(
+      'https://qqhrtpbazuupayhvelrm.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxaHJ0cGJhenV1cGF5aHZlbHJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjEyODgsImV4cCI6MjA2Mjc5NzI4OH0.wuT6wBQByGUwoUYyWE0cGBETE3AH2H5fYPYYFfSvznw'
+    )
+
+    async function logout() {
+      await supabase.auth.signOut()
+      window.location.href = "index.html"
+    }
+  </script>
+
+</body>
+</html>
