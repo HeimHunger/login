@@ -2,10 +2,9 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Gericht posten – HeimHunger</title>
   <style>
-    * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: Arial, sans-serif;
@@ -13,21 +12,12 @@
       color: #3b1f0b;
       display: flex;
       min-height: 100vh;
-      flex-direction: column;
-    }
-    .banner {
-      height: 250px;
-      background: url('https://wallpapers.com/images/featured/food-4k-1pf6px6ryqfjtnyr.jpg') center/cover no-repeat;
-      width: 100%;
-    }
-    .main-wrapper {
-      display: flex;
-      flex: 1;
     }
     nav {
       width: 220px;
       background-color: #fff3e7;
       padding: 2rem 1rem;
+      flex-shrink: 0;
     }
     nav h1 {
       font-size: 1.6rem;
@@ -40,14 +30,17 @@
       color: #7a2e0b;
       background: none;
       border: none;
-      font: inherit;
+      font-weight: bold;
       text-align: left;
       cursor: pointer;
       text-decoration: none;
-      font-weight: bold;
     }
     nav a:hover, nav button:hover {
       text-decoration: underline;
+    }
+    .main-wrapper {
+      display: flex;
+      flex: 1;
     }
     main {
       padding: 2rem;
@@ -65,7 +58,7 @@
       border: 1px solid #ccc;
       font-size: 1rem;
     }
-    button {
+    button[type="submit"] {
       background-color: #a33d1e;
       color: white;
       padding: 0.8rem;
@@ -74,113 +67,76 @@
       font-weight: bold;
       cursor: pointer;
     }
-    .success {
-      color: green;
-      margin-top: 1rem;
-    }
-    .error {
-      color: red;
-      margin-top: 1rem;
-    }
-    footer {
-      background: #fff3e7;
-      padding: 2rem;
-      text-align: center;
-      font-size: 0.9rem;
-      margin-top: auto;
-    }
-    footer a {
-      margin: 0 1rem;
-      color: #7a2e0b;
-      text-decoration: none;
-    }
+    .success { color: green; margin-top: 1rem; }
+    .error   { color: red;   margin-top: 1rem; }
   </style>
 </head>
 <body>
-  <div class="banner"></div>
   <div class="main-wrapper">
     <nav>
       <h1>HeimHunger 🍲</h1>
-      <div id="sidebar-links">Lade Menü...</div>
+      <div id="sidebar-links">Lade Menü…</div>
     </nav>
     <main>
       <h2>🍳 Neues Gericht posten</h2>
-      <form id="mealForm" style="display: none;">
-        <input type="text" id="name" placeholder="Name des Gerichts" required />
+      <form id="mealForm">
+        <input  type="text"     id="name"         placeholder="Name des Gerichts" required />
         <textarea id="description" placeholder="Beschreibung" rows="4" required></textarea>
-        <input type="number" id="price" placeholder="Preis (€)" step="0.01" required />
-        <input type="datetime-local" id="pickup_time" required />
-        <input type="url" id="image_url" placeholder="Bild-URL" required />
+        <input  type="number"   id="price"        placeholder="Preis (€)" step="0.01" required />
+        <input  type="datetime-local" id="pickup_time" required />
+        <input  type="url"      id="image_url"    placeholder="Bild-URL" required />
         <button type="submit">Posten</button>
         <div id="status"></div>
       </form>
-      <p id="login-message" style="color: #a33d1e;"></p>
     </main>
   </div>
-  <footer>
-    <p>&copy; 2025 HeimHunger – Heimisches Essen von Hobbyköchen zur Abholung.</p>
-    <p>
-      <a href="agb.html">AGB</a>
-      <a href="datenschutz.html">Datenschutz</a>
-      <a href="impressum.html">Impressum</a>
-    </p>
-  </footer>
 
   <script type="module">
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
     const supabase = createClient(
       'https://qqhrtpbazuupayhvelrm.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+      'PUBLIC_ANON_KEY'
     );
 
+    // Session prüfen und ggf. weiterleiten
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    if (sessionError) console.error('Session-Fehler:', sessionError.message);
+    if (!session) {
+      window.location.href = 'index.html';
+      throw new Error('Keine aktive Session');
+    }
+    const user = session.user;
+
+    // Sidebar dynamisch befüllen
+    const sidebar = document.getElementById('sidebar-links');
+    sidebar.innerHTML = `
+      <a href="explore.html">Gerichte entdecken</a>
+      <a href="post.html">Gericht posten</a>
+      <a href="customer.html">Mein Bereich</a>
+      <a href="agb.html">AGB</a>
+      <a href="datenschutz.html">Datenschutz</a>
+      <button id="logout">🔒 Logout</button>
+    `;
+    document.getElementById('logout').addEventListener('click', async () => {
+      await supabase.auth.signOut();
+      window.location.href = 'index.html';
+    });
+
+    // Formular-Handling
     const form = document.getElementById('mealForm');
     const status = document.getElementById('status');
-    const sidebar = document.getElementById('sidebar-links');
-    const loginMessage = document.getElementById('login-message');
-
-    const { data: { user } } = await supabase.auth.getUser();
-
-    // Sidebar dynamisch
-    if (user) {
-      sidebar.innerHTML = `
-        <a href="explore.html">Gerichte entdecken</a>
-        <a href="post.html">Gericht posten</a>
-        <a href="customer.html">Mein Bereich</a>
-        <a href="agb.html">AGB</a>
-        <a href="datenschutz.html">Datenschutz</a>
-        <button id="logout">🔒 Logout</button>
-      `;
-      document.getElementById('logout').addEventListener('click', async () => {
-        await supabase.auth.signOut();
-        localStorage.clear();
-        sessionStorage.clear();
-        window.location.href = "index.html";
-      });
-
-      form.style.display = "flex";
-      loginMessage.textContent = "";
-
-    } else {
-      sidebar.innerHTML = `
-        <a href="explore.html">Gerichte entdecken</a>
-        <a href="agb.html">AGB</a>
-        <a href="datenschutz.html">Datenschutz</a>
-        <a href="index.html">🔑 Anmelden</a>
-      `;
-      loginMessage.textContent = "Bitte melde dich an, um ein Gericht zu posten.";
-    }
-
-    if (!user) return;
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
+      status.textContent = '';
+      status.className = '';
 
-      const name = document.getElementById('name').value.trim();
-      const description = document.getElementById('description').value.trim();
-      const price = parseFloat(document.getElementById('price').value);
-      const pickup_time = document.getElementById('pickup_time').value;
-      const image_url = document.getElementById('image_url').value.trim();
+      const name        = form.name.value.trim();
+      const description = form.description.value.trim();
+      const price       = parseFloat(form.price.value);
+      const pickup_time = form.pickup_time.value;
+      const image_url   = form.image_url.value.trim();
 
       if (!name || !description || !pickup_time || isNaN(price)) {
         status.textContent = 'Bitte alle Felder korrekt ausfüllen.';
@@ -188,37 +144,31 @@
         return;
       }
 
-      // Adresse zusammensetzen aus Nutzerprofil
+      // Adresse aus user_metadata
       const meta = user.user_metadata;
       const address = `${meta.street} ${meta.house_number}, ${meta.zip} ${meta.city}, ${meta.country}`;
-      const geoUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=AIzaSyAZvGocBAsVTSOcAe_Qe2Kx8tF83BeN4U4`;
+      const geoUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=GOOGLE_API_KEY`;
 
       try {
-        const res = await fetch(geoUrl);
-        const geo = await res.json();
-        if (geo.status !== "OK") throw new Error("Adresse konnte nicht gefunden werden.");
-        const { lat, lng } = geo.results[0].geometry.location;
+        const geoRes = await fetch(geoUrl);
+        const geoData = await geoRes.json();
+        if (geoData.status !== 'OK') throw new Error('Adresse konnte nicht geokodiert werden');
 
-        const { error } = await supabase.from('meals').insert([{
-          name,
-          description,
-          price,
-          pickup_time,
-          image_url,
-          latitude: lat,
-          longitude: lng
-        }]);
+        const { lat, lng } = geoData.results[0].geometry.location;
 
-        if (error) {
-          status.textContent = 'Fehler beim Posten: ' + error.message;
-          status.className = 'error';
-        } else {
-          status.textContent = '✅ Gericht erfolgreich gepostet!';
-          status.className = 'success';
-          form.reset();
+        const { error: insertError } = await supabase
+          .from('meals')
+          .insert([{ name, description, price, pickup_time, image_url, latitude: lat, longitude: lng }]);
+
+        if (insertError) {
+          throw insertError;
         }
+
+        status.textContent = '✅ Gericht erfolgreich gepostet!';
+        status.className = 'success';
+        form.reset();
       } catch (err) {
-        status.textContent = 'Fehler bei der Geokodierung: ' + err.message;
+        status.textContent = `❌ Fehler: ${err.message}`;
         status.className = 'error';
       }
     });
