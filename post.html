@@ -92,15 +92,17 @@
   </div>
 
   <script type="module">
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
     const supabase = createClient(
       'https://qqhrtpbazuupayhvelrm.supabase.co',
-      'PUBLIC_ANON_KEY'
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxaHJ0cGJhenV1cGF5aHZlbHJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjEyODgsImV4cCI6MjA2Mjc5NzI4OH0.wuT6wBQByGUwoUYyWE0cGBETE3AH2H5fYPYYFfSvznw'
     );
 
     // Session prüfen und ggf. weiterleiten
     const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    console.log('Session:', session, 'Error:', sessionError);
+    console.log('LocalStorage Keys:', Object.keys(localStorage));
     if (sessionError) console.error('Session-Fehler:', sessionError.message);
     if (!session) {
       window.location.href = 'index.html';
@@ -160,9 +162,7 @@
           .from('meals')
           .insert([{ name, description, price, pickup_time, image_url, latitude: lat, longitude: lng }]);
 
-        if (insertError) {
-          throw insertError;
-        }
+        if (insertError) throw insertError;
 
         status.textContent = '✅ Gericht erfolgreich gepostet!';
         status.className = 'success';
