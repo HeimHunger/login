@@ -1,44 +1,132 @@
-<!-- Kopf & Styles wie gehabt -->
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gericht posten – HeimHunger</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #fce9dc;
+      color: #3b1f0b;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    nav {
+      width: 220px;
+      background-color: #fff3e7;
+      padding: 2rem 1rem;
+      flex-shrink: 0;
+      height: 100vh;
+    }
+    nav h1 {
+      font-size: 1.6rem;
+      color: #5c2b10;
+      margin-bottom: 2rem;
+    }
+    nav a, nav button {
+      display: block;
+      margin: 1rem 0;
+      color: #7a2e0b;
+      background: none;
+      border: none;
+      font-weight: bold;
+      text-align: left;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    nav a:hover, nav button:hover {
+      text-decoration: underline;
+    }
+    .main-wrapper {
+      display: flex;
+      flex: 1;
+    }
+    main {
+      padding: 2rem;
+      width: 100%;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      max-width: 500px;
+    }
+    input, textarea {
+      padding: 0.8rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+    button[type="submit"] {
+      background-color: #a33d1e;
+      color: white;
+      padding: 0.8rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .success { color: green; margin-top: 1rem; }
+    .error { color: red; margin-top: 1rem; }
+  </style>
+</head>
+<body>
+  <div class="main-wrapper">
+    <nav>
+      <h1>HeimHunger 🍲</h1>
+      <div id="sidebar-links">Lade Menü...</div>
+    </nav>
+    <main>
+      <h2>🍳 Neues Gericht posten</h2>
+      <form id="mealForm">
+        <input type="text" id="name" placeholder="Name des Gerichts" required />
+        <textarea id="description" placeholder="Beschreibung" rows="4" required></textarea>
+        <input type="number" id="price" placeholder="Preis (€)" step="0.01" required />
+        <input type="datetime-local" id="pickup_time" required />
+        <input type="url" id="image_url" placeholder="Bild-URL" required />
+        <button type="submit">Posten</button>
+        <div id="status"></div>
+      </form>
+    </main>
+  </div>
 
-<script type="module">
-  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-  const supabase = createClient(
-    'https://qqhrtpbazuupayhvelrm.supabase.co',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
-  );
+    const supabase = createClient(
+      'https://qqhrtpbazuupayhvelrm.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+    );
 
-  const form = document.getElementById('mealForm');
-  const status = document.getElementById('status');
-  const sidebar = document.getElementById('sidebar-links');
+    const { data: { user }, error } = await supabase.auth.getUser();
 
-  const { data: sessionData } = await supabase.auth.getSession();
-  const session = sessionData?.session;
-  const user = session?.user;
+    const sidebar = document.getElementById('sidebar-links');
+    const form = document.getElementById('mealForm');
+    const status = document.getElementById('status');
 
-  if (!user) {
-    window.location.href = "index.html";
-  } else {
-    const meta = user.user_metadata;
-
-    sidebar.innerHTML = `
-      <a href="explore.html">Gerichte entdecken</a>
-      <a href="post.html">Gericht posten</a>
-      <a href="customer.html">Mein Bereich</a>
-      <a href="agb.html">AGB</a>
-      <a href="datenschutz.html">Datenschutz</a>
-      <button id="logout">🔒 Logout</button>
-    `;
-
-    document.getElementById('logout').addEventListener('click', async () => {
-      await supabase.auth.signOut();
-      localStorage.clear();
-      sessionStorage.clear();
+    if (!user) {
       window.location.href = "index.html";
-    });
+    } else {
+      sidebar.innerHTML = `
+        <a href="explore.html">Gerichte entdecken</a>
+        <a href="post.html">Gericht posten</a>
+        <a href="customer.html">Mein Bereich</a>
+        <a href="agb.html">AGB</a>
+        <a href="datenschutz.html">Datenschutz</a>
+        <button id="logout">🔒 Logout</button>
+      `;
+      document.getElementById('logout').addEventListener('click', async () => {
+        await supabase.auth.signOut();
+        window.location.href = "index.html";
+      });
+    }
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
+      status.textContent = '';
 
       const name = document.getElementById('name').value.trim();
       const description = document.getElementById('description').value.trim();
@@ -52,38 +140,38 @@
         return;
       }
 
+      // Adresse aus user_metadata lesen
+      const meta = user.user_metadata;
       const address = `${meta.street} ${meta.house_number}, ${meta.zip} ${meta.city}, ${meta.country}`;
-      const geoUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=AIzaSyAZvGocBAsVTSOcAe_Qe2Kx8tF83BeN4U4`;
+      const apiKey = "AIzaSyAZvGocBAsVTSOcAe_Qe2Kx8tF83BeN4U4";
+      const geoUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`;
 
       try {
-        const res = await fetch(geoUrl);
-        const geo = await res.json();
-        if (geo.status !== "OK") throw new Error("Adresse konnte nicht gefunden werden.");
-        const { lat, lng } = geo.results[0].geometry.location;
+        const response = await fetch(geoUrl);
+        const data = await response.json();
 
-        const { error } = await supabase.from('meals').insert([{
-          name,
-          description,
-          price,
-          pickup_time,
-          image_url,
-          latitude: lat,
-          longitude: lng
+        if (data.status !== "OK") throw new Error("Adresse konnte nicht geokodiert werden");
+
+        const { lat, lng } = data.results[0].geometry.location;
+
+        const { error: insertError } = await supabase.from('meals').insert([{
+          name, description, price, pickup_time, image_url,
+          latitude: lat, longitude: lng
         }]);
 
-        if (error) {
-          status.textContent = 'Fehler beim Posten: ' + error.message;
+        if (insertError) {
+          status.textContent = 'Fehler beim Speichern: ' + insertError.message;
           status.className = 'error';
         } else {
           status.textContent = '✅ Gericht erfolgreich gepostet!';
           status.className = 'success';
           form.reset();
         }
-
       } catch (err) {
-        status.textContent = 'Fehler bei der Geokodierung: ' + err.message;
+        status.textContent = '❌ Geocoding-Fehler: ' + err.message;
         status.className = 'error';
       }
     });
-  }
-</script>
+  </script>
+</body>
+</html>
