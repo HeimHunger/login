@@ -1,13 +1,3 @@
-// supabaseClient.js
-// Lege diese Datei ins gleichen Ordner wie deine HTML-Dateien
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-
-export const supabase = createClient(
-  'https://qqhrtpbazuupayhvelrm.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxaHJ0cGJhenV1cGF5aHZlbHJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjEyODgsImV4cCI6MjA2Mjc5NzI4OH0.wuT6wBQByGUwoUYyWE0cGBETE3AH2H5fYPYYFfSvznw'
-);
-
-// post.html
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -153,7 +143,23 @@ export const supabase = createClient(
     if (session) document.getElementById('logout').addEventListener('click', async () => {
       await supabase.auth.signOut(); window.location.href = 'index.html';
     });
+    <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
+    const supabase = createClient(
+      'https://qqhrtpbazuupayhvelrm.supabase.co',
+      'eyJ...'
+    );
+
+    const sidebar = document.getElementById('sidebar-links');
+    const greeting = document.getElementById('greeting');
+
+    const { data: sessionData } = await supabase.auth.getSession();
+    const session = sessionData?.session;
+    const user = session?.user;
+
+    if (!user) {
+      window.location.href = "index.html";
     // Formular-Handling
     const form = document.getElementById('mealForm');
     const statusEl = document.getElementById('status');
