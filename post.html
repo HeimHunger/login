@@ -13,8 +13,8 @@
       background-color: #fce9dc;
       color: #3b1f0b;
       display: flex;
-      min-height: 100vh;
       flex-direction: column;
+      min-height: 100vh;
     }
 
     .banner {
@@ -32,6 +32,7 @@
       width: 220px;
       background-color: #fff3e7;
       padding: 2rem 1rem;
+      flex-shrink: 0;
     }
 
     nav h1 {
@@ -118,7 +119,7 @@
       <a href="customer.html">Mein Bereich</a>
       <a href="agb.html">AGB</a>
       <a href="datenschutz.html">Datenschutz</a>
-      <a href="index.html">🔒 Logout</a>
+      <a href="#" onclick="logout()">🔒 Logout</a>
     </nav>
 
     <main>
@@ -152,11 +153,18 @@
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxaHJ0cGJhenV1cGF5aHZlbHJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjEyODgsImV4cCI6MjA2Mjc5NzI4OH0.wuT6wBQByGUwoUYyWE0cGBETE3AH2H5fYPYYFfSvznw'
     );
 
-    // Check if user is logged in
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
+    if (!user || !user.email_confirmed_at) {
       window.location.href = "index.html";
     }
+
+    async function logout() {
+      await supabase.auth.signOut();
+      localStorage.clear();
+      sessionStorage.clear();
+      window.location.href = "index.html";
+    }
+    window.logout = logout;
 
     const form = document.getElementById('mealForm');
     const status = document.getElementById('status');
@@ -181,7 +189,7 @@
       ]);
 
       if (error) {
-        status.textContent = 'Fehler beim Posten.';
+        status.textContent = '❌ Fehler beim Posten: ' + error.message;
         status.className = 'error';
       } else {
         status.textContent = '✅ Gericht erfolgreich gepostet!';
