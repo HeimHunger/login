@@ -3,155 +3,120 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HeimHunger – Gerichte entdecken</title>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <title>HeimHunger - Gerichte entdecken</title>
+  <link rel="stylesheet" href="style.css" />
   <style>
     body {
+      background-color: #f7e4d3; /* Einheitliches warmes Beige */
+      color: #3c2f2f;
+      font-family: 'Arial', sans-serif;
       margin: 0;
-      font-family: 'Inter', sans-serif;
-      background: linear-gradient(to bottom right, #fffaf5, #fcdcc8);
-      color: #2e1c13;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
       padding: 1rem;
     }
 
     .header {
-      width: 100%;
-      max-width: 1200px;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      padding: 1rem 0;
+      justify-content: space-between;
     }
 
     .logo {
-      font-family: 'DM Serif Display', serif;
-      font-size: 2rem;
+      font-size: 1.8rem;
       font-weight: bold;
-      color: #8b2c1f;
+      color: #8b3e2a;
     }
 
     .banner {
       width: 100%;
-      max-width: 1200px;
-      height: 260px;
-      background: url('https://cdn.midjourney.com/baf27e25-6bb8-44d5-ae49-8a15ebfc5044/grid_0.png') center/cover no-repeat;
+      height: 220px;
+      background: url('https://source.unsplash.com/1600x400/?grandma,cooking,food') center/cover no-repeat;
       border-radius: 16px;
-      margin-bottom: 2rem;
+      margin: 1.5rem 0;
     }
 
     .filters {
-      width: 100%;
-      max-width: 1200px;
       display: flex;
-      justify-content: space-between;
-      align-items: center;
       gap: 1rem;
-      margin-bottom: 1.5rem;
+      align-items: center;
+      margin-bottom: 2rem;
     }
 
     input, select {
-      padding: 0.75rem;
-      border-radius: 12px;
+      padding: 0.8rem 1rem;
       border: none;
-      outline: none;
-      background: #fdf5ed;
-      color: #5c2e28;
+      border-radius: 12px;
       font-size: 1rem;
-      flex: 1;
-    }
-
-    select {
-      max-width: 220px;
+      background: #fff7f3;
+      color: #3c2f2f;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
     }
 
     .meal-list {
-      width: 100%;
-      max-width: 1200px;
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 2rem;
-      padding-bottom: 3rem;
+      gap: 1.5rem;
     }
 
     .meal-card {
-      background: #fff;
+      background: #fff7f3;
       border-radius: 16px;
       overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
       transition: transform 0.2s ease;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-      border: 1px solid #fdd2b0;
     }
 
     .meal-card:hover {
-      transform: translateY(-6px);
+      transform: scale(1.02);
     }
 
     .meal-card img {
       width: 100%;
-      height: 180px;
+      height: 200px;
       object-fit: cover;
     }
 
     .content {
-      padding: 1rem 1.2rem;
+      padding: 1rem;
     }
 
     .title {
-      font-family: 'DM Serif Display', serif;
       font-size: 1.3rem;
+      font-weight: bold;
       margin-bottom: 0.3rem;
-      color: #8b2c1f;
     }
 
     .price {
-      color: #fc703c;
+      color: #8b3e2a;
       font-weight: bold;
-      font-size: 1.1rem;
     }
 
     .desc {
       margin-top: 0.5rem;
       font-size: 0.95rem;
-      color: #573c3c;
+      color: #5e4b4b;
     }
 
     .time {
       font-size: 0.85rem;
-      margin-top: 0.5rem;
-      color: #7e5c5c;
-    }
-
-    button {
-      background: #8b2c1f;
-      color: white;
-      padding: 0.6rem 1rem;
-      border-radius: 10px;
-      border: none;
-      font-size: 1rem;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #fc703c;
+      margin-top: 0.6rem;
+      color: #938181;
     }
   </style>
 </head>
 <body>
   <div class="header">
     <div class="logo">HeimHunger 🍲</div>
-    <button onclick="location.href='start.html'">Zurück</button>
+    <div><button onclick="location.href='start.html'">Zurück</button></div>
   </div>
 
   <div class="banner"></div>
 
   <div class="filters">
-    <input type="text" id="searchInput" placeholder="Ort oder Gericht suchen...">
+    <input type="text" id="searchInput" placeholder="Ort oder Gericht suchen..." />
     <select id="sortSelect">
       <option value="name">Sortieren nach Name</option>
       <option value="price">Sortieren nach Preis</option>
-      <option value="pickup_time">Sortieren nach Abholzeit</option>
+      <option value="pickup_time">Sortieren nach Zeit</option>
     </select>
   </div>
 
@@ -159,21 +124,17 @@
 
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-
-    const supabaseUrl = 'https://qqhrtpbazuupayhvelrm.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxaHJ0cGJhenV1cGF5aHZlbHJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjEyODgsImV4cCI6MjA2Mjc5NzI4OH0.wuT6wBQByGUwoUYyWE0cGBETE3AH2H5fYPYYFfSvznw';
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    const supabase = createClient(
+      'https://qqhrtpbazuupayhvelrm.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ...'
+    );
 
     async function fetchMeals() {
-      const { data, error } = await supabase
-        .from('meals')
-        .select('*');
-
+      const { data, error } = await supabase.from('meals').select('*');
       if (error) {
         document.getElementById('mealList').innerHTML = 'Fehler beim Laden der Gerichte';
         return;
       }
-
       renderMeals(data);
     }
 
