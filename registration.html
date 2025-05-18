@@ -117,12 +117,13 @@
 
       if (error) {
         status.textContent = '❌ Fehler: ' + error.message;
+        status.style.color = 'red';
       } else {
         status.textContent = '✅ Registrierung erfolgreich! Du kannst dich jetzt einloggen.';
+        status.style.color = 'green';
         form.reset();
       }
     });
   </script>
 </body>
 </html>
-"""
