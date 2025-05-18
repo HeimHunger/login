@@ -9,8 +9,8 @@
     body {
       margin: 0;
       font-family: 'Inter', sans-serif;
-      background: linear-gradient(to bottom right, #fff5ef, #fc703c);
-      color: #3d1f1f;
+      background: linear-gradient(to bottom right, #fffaf5, #fcdcc8);
+      color: #2e1c13;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -23,23 +23,23 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 1rem;
+      padding: 1rem 0;
     }
 
     .logo {
       font-family: 'DM Serif Display', serif;
       font-size: 2rem;
       font-weight: bold;
-      color: #5d0703;
+      color: #8b2c1f;
     }
 
     .banner {
       width: 100%;
       max-width: 1200px;
-      height: 250px;
-      background: url('https://cdn.midjourney.com/4ec2c01f-d9ff-406e-96b0-c46ee33fe648/grid_0.png') center/cover no-repeat;
-      border-radius: 10px;
-      margin-bottom: 1.5rem;
+      height: 260px;
+      background: url('https://cdn.midjourney.com/baf27e25-6bb8-44d5-ae49-8a15ebfc5044/grid_0.png') center/cover no-repeat;
+      border-radius: 16px;
+      margin-bottom: 2rem;
     }
 
     .filters {
@@ -48,16 +48,23 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 1rem;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
     }
 
     input, select {
-      padding: 0.5rem;
-      border-radius: 5px;
+      padding: 0.75rem;
+      border-radius: 12px;
       border: none;
       outline: none;
-      background: #2e2e2e;
-      color: #fff;
+      background: #fdf5ed;
+      color: #5c2e28;
+      font-size: 1rem;
+      flex: 1;
+    }
+
+    select {
+      max-width: 220px;
     }
 
     .meal-list {
@@ -65,20 +72,21 @@
       max-width: 1200px;
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1.5rem;
+      gap: 2rem;
       padding-bottom: 3rem;
     }
 
     .meal-card {
-      background: #1a1a1a;
-      border-radius: 10px;
+      background: #fff;
+      border-radius: 16px;
       overflow: hidden;
       transition: transform 0.2s ease;
-      box-shadow: 0 0 15px rgba(0,0,0,0.5);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      border: 1px solid #fdd2b0;
     }
 
     .meal-card:hover {
-      transform: scale(1.02);
+      transform: translateY(-6px);
     }
 
     .meal-card img {
@@ -88,30 +96,45 @@
     }
 
     .content {
-      padding: 1rem;
+      padding: 1rem 1.2rem;
     }
 
     .title {
-      font-size: 1.2rem;
-      font-weight: bold;
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.3rem;
       margin-bottom: 0.3rem;
+      color: #8b2c1f;
     }
 
     .price {
-      color: #facc15;
+      color: #fc703c;
       font-weight: bold;
+      font-size: 1.1rem;
     }
 
     .desc {
       margin-top: 0.5rem;
       font-size: 0.95rem;
-      color: #d1d1d1;
+      color: #573c3c;
     }
 
     .time {
       font-size: 0.85rem;
       margin-top: 0.5rem;
-      color: #bbb;
+      color: #7e5c5c;
+    }
+
+    button {
+      background: #8b2c1f;
+      color: white;
+      padding: 0.6rem 1rem;
+      border-radius: 10px;
+      border: none;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #fc703c;
     }
   </style>
 </head>
@@ -138,15 +161,19 @@
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
     const supabaseUrl = 'https://qqhrtpbazuupayhvelrm.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxaHJ0cGJhenV1cGF5aHZlbHJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjEyODgsImV4cCI6MjA2Mjc5NzI4OH0.wuT6wBQByGUwoUYyWE0cGBETE3AH2H5fYPYYFfSvznw';
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     async function fetchMeals() {
-      const { data, error } = await supabase.from('meals').select('*');
+      const { data, error } = await supabase
+        .from('meals')
+        .select('*');
+
       if (error) {
         document.getElementById('mealList').innerHTML = 'Fehler beim Laden der Gerichte';
         return;
       }
+
       renderMeals(data);
     }
 
@@ -174,6 +201,7 @@
 
     document.getElementById('searchInput').addEventListener('input', fetchMeals);
     document.getElementById('sortSelect').addEventListener('change', fetchMeals);
+
     fetchMeals();
   </script>
 </body>
