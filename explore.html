@@ -9,7 +9,7 @@
     body {
       margin: 0;
       font-family: 'Inter', sans-serif;
-      background: linear-gradient(to bottom, #fff5ef, #fc703c);
+      background: #fff5ef;
       color: #3d1f1f;
       display: flex;
       flex-direction: column;
@@ -23,7 +23,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 1rem;
+      padding: 1rem 0;
     }
 
     .logo {
@@ -36,17 +36,16 @@
     .banner {
       width: 100%;
       max-width: 1200px;
-      height: 230px;
+      height: 250px;
       background: url('https://cdn.midjourney.com/4ec2c01f-d9ff-406e-96b0-c46ee33fe648/grid_0.png') center/cover no-repeat;
-      border-radius: 18px;
-      margin-bottom: 1.5rem;
+      border-radius: 16px;
+      margin-bottom: 2rem;
     }
 
     .filters {
       width: 100%;
       max-width: 1200px;
       display: flex;
-      flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
       gap: 1rem;
@@ -58,9 +57,14 @@
       border-radius: 12px;
       border: none;
       outline: none;
-      background: #f4f3e6;
+      background: #F4F3E6;
       color: #5d0703;
       font-size: 1rem;
+      flex: 1;
+    }
+
+    select {
+      max-width: 220px;
     }
 
     .meal-list {
@@ -73,12 +77,12 @@
     }
 
     .meal-card {
-      background: #fff;
+      background: #ffffff;
       border-radius: 16px;
       overflow: hidden;
       transition: transform 0.2s ease;
-      box-shadow: 0 0 12px rgba(0,0,0,0.08);
-      border: 1px solid #ffe5da;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      border: 1px solid #FFA175;
     }
 
     .meal-card:hover {
@@ -97,13 +101,15 @@
 
     .title {
       font-family: 'DM Serif Display', serif;
-      font-size: 1.3rem;
+      font-size: 1.4rem;
       margin-bottom: 0.3rem;
+      color: #5d0703;
     }
 
     .price {
       color: #fc703c;
       font-weight: bold;
+      font-size: 1.1rem;
     }
 
     .desc {
