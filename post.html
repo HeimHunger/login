@@ -2,134 +2,176 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>HeimHunger – Gerichte entdecken</title>
-  <!-- Dein Haupt-CSS -->
-  <link rel="stylesheet" href="styles.css" />
-  <!-- Supabase JS -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <!-- Google Maps API (mit deinem API-Key) -->
-  <script async
-    src="https://maps.googleapis.com/maps/api/js?key=DEIN_API_KEY&callback=initMap"
-    defer></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gericht posten – HeimHunger</title>
   <style>
-    /* Container: Sidebar + Map */
-    .layout {
-      display: flex;
-      height: 100vh;
+    body {
       margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #fce9dc;
+      color: #3b1f0b;
+      display: flex;
+      min-height: 100vh;
     }
-    /* Sidebar: fixe Breite */
-    .sidebar {
-      width: 260px;
-      background: #f8f9fa;
-      padding: 1rem;
-      box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-      overflow-y: auto;
+    nav {
+      width: 220px;
+      background-color: #fff3e7;
+      padding: 2rem 1rem;
+      flex-shrink: 0;
     }
-    .sidebar a {
+    nav h1 {
+      font-size: 1.6rem;
+      color: #5c2b10;
+      margin-bottom: 2rem;
+    }
+    nav a, nav button {
       display: block;
-      margin: 0.5rem 0;
-      color: #333;
+      margin: 1rem 0;
+      color: #7a2e0b;
+      background: none;
+      border: none;
+      font-weight: bold;
+      text-align: left;
+      cursor: pointer;
       text-decoration: none;
     }
-    /* Map-Container: nimmt verbleibenden Platz, aber max-breite */
-    .map-container {
+    nav a:hover, nav button:hover {
+      text-decoration: underline;
+    }
+    .main-wrapper {
+      display: flex;
       flex: 1;
-      max-width: 900px;
-      height: 100%;
     }
-    /* Map-Div füllt Container */
-    #map {
+    main {
+      padding: 2rem;
       width: 100%;
-      height: 100%;
     }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      max-width: 500px;
+    }
+    input, textarea {
+      padding: 0.8rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+    button[type="submit"] {
+      background-color: #a33d1e;
+      color: white;
+      padding: 0.8rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .success { color: green; margin-top: 1rem; }
+    .error   { color: red;   margin-top: 1rem; }
   </style>
 </head>
 <body>
-  <!-- Banner -->
-  <header style="background:#e63946;color:#fff;padding:1rem;text-align:center;">
-    <h1>HeimHunger</h1>
-  </header>
-
-  <div class="layout">
-    <!-- Sidebar -->
-    <nav class="sidebar" id="sidebar">
-      <!-- Links werden per JS dynamisch eingefügt -->
+  <div class="main-wrapper">
+    <nav>
+      <h1>HeimHunger 🍲</h1>
+      <div id="sidebar-links">Lade Menü…</div>
     </nav>
-
-    <!-- Map -->
-    <div class="map-container">
-      <div id="map"></div>
-    </div>
+    <main>
+      <h2>🍳 Neues Gericht posten</h2>
+      <form id="mealForm">
+        <input  type="text"     id="name"         placeholder="Name des Gerichts" required />
+        <textarea id="description" placeholder="Beschreibung" rows="4" required></textarea>
+        <input  type="number"   id="price"        placeholder="Preis (€)" step="0.01" required />
+        <input  type="datetime-local" id="pickup_time" required />
+        <input  type="url"      id="image_url"    placeholder="Bild-URL" required />
+        <button type="submit">Posten</button>
+        <div id="status"></div>
+      </form>
+    </main>
   </div>
 
-  <footer style="text-align:center;padding:0.5rem;background:#f1f1f1;">
-    © 2025 HeimHunger
-  </footer>
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-  <script>
-    // Supabase initialisieren
-    const SUPABASE_URL = 'https://xyz.supabase.co';
-    const SUPABASE_KEY = 'public-anon-key';
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const supabase = createClient(
+      'https://qqhrtpbazuupayhvelrm.supabase.co',
+      'PUBLIC_ANON_KEY'
+    );
 
-    // Sidebar-Inhalt je nach Login-Status
-    async function setupSidebar() {
-      const user = supabase.auth.user();
-      const sidebar = document.getElementById('sidebar');
-      sidebar.innerHTML = '';
-      if (user) {
-        sidebar.innerHTML += '<a href="post.html">Gericht posten</a>';
-        sidebar.innerHTML += '<a href="customer.html">Mein Bereich</a>';
-        sidebar.innerHTML += '<a href="#" id="logout">Logout</a>';
-      } else {
-        sidebar.innerHTML += '<a href="index.html">Anmelden</a>';
-        sidebar.innerHTML += '<a href="explore.html">Gerichte entdecken</a>';
-      }
-      sidebar.innerHTML += '<hr/>';
-      sidebar.innerHTML += '<a href="agb.html">AGB</a>';
-      sidebar.innerHTML += '<a href="datenschutz.html">Datenschutz</a>';
-      sidebar.innerHTML += '<a href="impressum.html">Impressum</a>';
-
-      if (user) {
-        document.getElementById('logout').addEventListener('click', async () => {
-          await supabase.auth.signOut();
-          window.location.href = 'index.html';
-        });
-      }
+    // Session prüfen und ggf. weiterleiten
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    if (sessionError) console.error('Session-Fehler:', sessionError.message);
+    if (!session) {
+      window.location.href = 'index.html';
+      throw new Error('Keine aktive Session');
     }
+    const user = session.user;
 
-    // Google Map initialisieren
-    async function initMap() {
-      await setupSidebar();
+    // Sidebar dynamisch befüllen
+    const sidebar = document.getElementById('sidebar-links');
+    sidebar.innerHTML = `
+      <a href="explore.html">Gerichte entdecken</a>
+      <a href="post.html">Gericht posten</a>
+      <a href="customer.html">Mein Bereich</a>
+      <a href="agb.html">AGB</a>
+      <a href="datenschutz.html">Datenschutz</a>
+      <button id="logout">🔒 Logout</button>
+    `;
+    document.getElementById('logout').addEventListener('click', async () => {
+      await supabase.auth.signOut();
+      window.location.href = 'index.html';
+    });
 
-      const map = new google.maps.Map(document.getElementById('map'), {
-        center: { lat: 52.5200, lng: 13.4050 }, // Berlin
-        zoom: 12,
-      });
+    // Formular-Handling
+    const form = document.getElementById('mealForm');
+    const status = document.getElementById('status');
 
-      // Gerichte aus Supabase laden
-      const { data: meals, error } = await supabase
-        .from('meals')
-        .select('id, title, latitude, longitude');
-      if (error) {
-        console.error('Fehler beim Laden der Gerichte:', error);
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      status.textContent = '';
+      status.className = '';
+
+      const name        = form.name.value.trim();
+      const description = form.description.value.trim();
+      const price       = parseFloat(form.price.value);
+      const pickup_time = form.pickup_time.value;
+      const image_url   = form.image_url.value.trim();
+
+      if (!name || !description || !pickup_time || isNaN(price)) {
+        status.textContent = 'Bitte alle Felder korrekt ausfüllen.';
+        status.className = 'error';
         return;
       }
 
-      // Marker setzen
-      meals.forEach(meal => {
-        new google.maps.Marker({
-          position: { lat: meal.latitude, lng: meal.longitude },
-          map: map,
-          title: meal.title,
-        });
-      });
-    }
+      // Adresse aus user_metadata
+      const meta = user.user_metadata;
+      const address = `${meta.street} ${meta.house_number}, ${meta.zip} ${meta.city}, ${meta.country}`;
+      const geoUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=GOOGLE_API_KEY`;
 
-    // Falls Google Maps API noch nicht geladen ist, auf Callback warten
-    window.initMap = initMap;
+      try {
+        const geoRes = await fetch(geoUrl);
+        const geoData = await geoRes.json();
+        if (geoData.status !== 'OK') throw new Error('Adresse konnte nicht geokodiert werden');
+
+        const { lat, lng } = geoData.results[0].geometry.location;
+
+        const { error: insertError } = await supabase
+          .from('meals')
+          .insert([{ name, description, price, pickup_time, image_url, latitude: lat, longitude: lng }]);
+
+        if (insertError) {
+          throw insertError;
+        }
+
+        status.textContent = '✅ Gericht erfolgreich gepostet!';
+        status.className = 'success';
+        form.reset();
+      } catch (err) {
+        status.textContent = `❌ Fehler: ${err.message}`;
+        status.className = 'error';
+      }
+    });
   </script>
 </body>
 </html>
