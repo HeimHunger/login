@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -244,15 +245,17 @@
 
     const supabase = createClient(
       'https://qqhrtpbazuupayhvelrm.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ey...'
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxaHJ0cGJhenV1cGF5aHZlbHJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjEyODgsImV4cCI6MjA2Mjc5NzI4OH0.wuT6wBQByGUwoUYyWE0cGBETE3AH2H5fYPYYFfSvznw'
     );
 
-    // Sidebar dynamisch
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { user }, error } = await supabase.auth.getUser();
+
     const sidebar = document.getElementById('sidebar-links');
     const greeting = document.getElementById('greeting');
 
-    if (user) {
+    if (!user) {
+      window.location.href = "index.html";
+    } else {
       greeting.textContent = `👋 Hallo, ${user.user_metadata?.name || user.email}`;
       sidebar.innerHTML = `
         <a href="explore.html">Gerichte entdecken</a>
@@ -260,13 +263,8 @@
         <a href="customer.html">Mein Bereich</a>
         <a href="agb.html">AGB</a>
         <a href="datenschutz.html">Datenschutz</a>
-        <a href="#" onclick="logout()">🔒 Logout</a>`;
-    } else {
-      sidebar.innerHTML = `
-        <a href="explore.html">Gerichte entdecken</a>
-        <a href="agb.html">AGB</a>
-        <a href="datenschutz.html">Datenschutz</a>
-        <a href="index.html">🔑 Anmelden</a>`;
+        <a href="#" onclick="logout()">🔒 Logout</a>
+      `;
     }
 
     async function logout() {
@@ -274,7 +272,6 @@
       window.location.href = "index.html";
     }
 
-    // Gerichte laden
     async function fetchMeals() {
       const { data, error } = await supabase.from('meals').select('*');
       if (error) {
@@ -311,5 +308,6 @@
 
     fetchMeals();
   </script>
+
 </body>
 </html>
