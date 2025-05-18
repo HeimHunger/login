@@ -1,76 +1,78 @@
-<!-- ... Kopf & CSS wie gehabt ... -->
+<!-- Kopf & Styles wie gehabt -->
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-  <script type="module">
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+  const supabase = createClient(
+    'https://qqhrtpbazuupayhvelrm.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+  );
 
-    const supabase = createClient(
-      'https://qqhrtpbazuupayhvelrm.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
-    );
+  const form = document.getElementById('mealForm');
+  const status = document.getElementById('status');
+  const sidebar = document.getElementById('sidebar-links');
 
-    const form = document.getElementById('mealForm');
-    const status = document.getElementById('status');
-
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    window.location.href = "index.html";
+  } else {
+    sidebar.innerHTML = `
+      <a href="explore.html">Gerichte entdecken</a>
+      <a href="post.html">Gericht posten</a>
+      <a href="customer.html">Mein Bereich</a>
+      <a href="agb.html">AGB</a>
+      <a href="datenschutz.html">Datenschutz</a>
+      <button id="logout">🔒 Logout</button>
+    `;
+    document.getElementById('logout').addEventListener('click', async () => {
+      await supabase.auth.signOut();
+      localStorage.clear();
+      sessionStorage.clear();
       window.location.href = "index.html";
+    });
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const name = document.getElementById('name').value.trim();
+    const description = document.getElementById('description').value.trim();
+    const price = parseFloat(document.getElementById('price').value);
+    const pickup_time = document.getElementById('pickup_time').value;
+    const image_url = document.getElementById('image_url').value.trim();
+
+    if (!name || !description || !pickup_time || isNaN(price)) {
+      status.textContent = 'Bitte alle Felder korrekt ausfüllen.';
+      status.className = 'error';
+      return;
     }
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
+    // Adresse zusammensetzen aus User-Daten
+    const meta = user.user_metadata;
+    const address = `${meta.street} ${meta.house_number}, ${meta.zip} ${meta.city}, ${meta.country}`;
+    const geoUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=AIzaSyAZvGocBAsVTSOcAe_Qe2Kx8tF83BeN4U4`;
 
-      const name = document.getElementById('name').value.trim();
-      const description = document.getElementById('description').value.trim();
-      const price = parseFloat(document.getElementById('price').value);
-      const pickup_time = document.getElementById('pickup_time').value;
-      const image_url = document.getElementById('image_url').value.trim();
+    try {
+      const res = await fetch(geoUrl);
+      const geo = await res.json();
+      if (geo.status !== "OK") throw new Error("Adresse konnte nicht gefunden werden.");
+      const { lat, lng } = geo.results[0].geometry.location;
 
-      if (!name || !description || !pickup_time || isNaN(price)) {
-        status.textContent = 'Bitte alle Felder korrekt ausfüllen.';
+      const { error } = await supabase.from('meals').insert([{
+        name, description, price, pickup_time, image_url,
+        latitude: lat, longitude: lng
+      }]);
+
+      if (error) {
+        status.textContent = 'Fehler beim Posten: ' + error.message;
         status.className = 'error';
-        return;
+      } else {
+        status.textContent = '✅ Gericht erfolgreich gepostet!';
+        status.className = 'success';
+        form.reset();
       }
-
-      // Adresse zusammensetzen
-      const address = `${user.user_metadata.street} ${user.user_metadata.house_number}, ${user.user_metadata.zip} ${user.user_metadata.city}, ${user.user_metadata.country}`;
-
-      // Geocoding API aufrufen
-      const apiKey = "AIzaSyAZvGocBAsVTSOcAe_Qe2Kx8tF83BeN4U4";
-      const geoUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`;
-
-      try {
-        const response = await fetch(geoUrl);
-        const geoData = await response.json();
-
-        if (geoData.status !== "OK") {
-          throw new Error("Adresse konnte nicht gefunden werden.");
-        }
-
-        const { lat, lng } = geoData.results[0].geometry.location;
-
-        // Gericht mit Koordinaten speichern
-        const { error } = await supabase.from('meals').insert([{
-          name,
-          description,
-          price,
-          pickup_time,
-          image_url,
-          latitude: lat,
-          longitude: lng
-        }]);
-
-        if (error) {
-          status.textContent = 'Fehler beim Posten.';
-          status.className = 'error';
-        } else {
-          status.textContent = '✅ Gericht erfolgreich gepostet!';
-          status.className = 'success';
-          form.reset();
-        }
-
-      } catch (err) {
-        status.textContent = 'Fehler bei der Geokodierung: ' + err.message;
-        status.className = 'error';
-      }
-    });
-  </script>
+    } catch (err) {
+      status.textContent = 'Fehler bei der Geokodierung: ' + err.message;
+      status.className = 'error';
+    }
+  });
+</script>
