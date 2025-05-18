@@ -1,118 +1,114 @@
+
 <!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HeimHunger – Heimisches Essen zum Abholen</title>
+  <title>HeimHunger – Gerichte entdecken</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      background: #f8e2d2;
-      color: #3b1f0b;
-      font-family: 'Arial', sans-serif;
       margin: 0;
-      padding: 0;
-    }
-
-    .header {
+      font-family: Arial, sans-serif;
+      background-color: #fce9dc;
+      color: #3b1f0b;
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem 2rem;
-      background-color: #fff3e7;
-    }
-
-    .logo {
-      font-size: 2.4rem;
-      font-weight: bold;
-      color: #7a2e0b;
-    }
-
-    .back-button button {
-      background-color: #a33d1e;
-      color: white;
-      border: none;
-      padding: 0.6rem 1rem;
-      border-radius: 10px;
-      cursor: pointer;
+      flex-direction: column;
+      min-height: 100vh;
     }
 
     .banner {
+      background: url('https://wallpapers.com/images/featured/food-4k-1pf6px6ryqfjtnyr.jpg') center/cover no-repeat;
+      height: 250px;
       width: 100%;
-      height: 260px;
-      background: url('https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
     }
 
-    .top-dishes {
-      max-width: 1200px;
-      margin: 2rem auto;
-      padding: 1rem;
-      background-color: #fff7f0;
-      border-radius: 12px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    }
-
-    .top-dishes h2 {
-      margin-bottom: 1rem;
-      font-size: 1.6rem;
-      color: #7a2e0b;
-    }
-
-    .top-dish-list {
+    .main-wrapper {
       display: flex;
-      gap: 1.5rem;
-      flex-wrap: wrap;
+      flex: 1;
     }
 
-    .top-dish {
-      background-color: white;
-      border-radius: 10px;
-      width: 300px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      overflow: hidden;
+    nav {
+      width: 220px;
+      background-color: #fff3e7;
+      padding: 2rem 1rem;
+      flex-shrink: 0;
     }
 
-    .top-dish img {
+    nav h1 {
+      font-size: 1.6rem;
+      color: #5c2b10;
+      margin-bottom: 2rem;
+    }
+
+    nav a {
+      display: block;
+      margin: 1rem 0;
+      color: #7a2e0b;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    main {
+      padding: 2rem;
       width: 100%;
-      height: 160px;
+    }
+
+    .user-greeting {
+      text-align: right;
+      margin-bottom: 1rem;
+      font-weight: bold;
+      color: #5c2b10;
+    }
+
+    .top-meals {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1.2rem;
+      margin-bottom: 2rem;
+    }
+
+    .top-meals .card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .top-meals img {
+      width: 100%;
+      height: 140px;
       object-fit: cover;
     }
 
-    .top-dish .info {
-      padding: 0.8rem 1rem;
-    }
-
-    .top-dish .name {
-      font-weight: bold;
-      color: #5c2b10;
-      font-size: 1.1rem;
-    }
-
-    .top-dish .stars {
-      color: #d35f2c;
-      margin-top: 0.3rem;
+    .top-meals .card div {
+      padding: 1rem;
     }
 
     .filters {
       display: flex;
-      justify-content: center;
-      align-items: center;
       gap: 1rem;
-      padding: 2rem 1rem;
+      margin-bottom: 2rem;
     }
 
-    .filters input, .filters select {
+    input, select {
       padding: 0.7rem;
       border-radius: 8px;
       border: 1px solid #ccc;
       font-size: 1rem;
-      width: 300px;
     }
 
     .meal-list {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 1.5rem;
-      padding: 2rem;
     }
 
     .meal-card {
@@ -155,60 +151,126 @@
       font-size: 0.85rem;
       color: #888;
     }
+
+    footer {
+      background: #fff3e7;
+      padding: 2rem;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    footer a {
+      margin: 0 1rem;
+      color: #7a2e0b;
+      text-decoration: none;
+    }
   </style>
 </head>
 <body>
-  <div class="header">
-    <div class="logo">HeimHunger 🍲</div>
-    <div class="back-button"><button onclick="location.href='start.html'">Zurück</button></div>
-  </div>
 
   <div class="banner"></div>
 
-  <section class="top-dishes">
-    <h2>Top Gerichte der Woche</h2>
-    <div class="top-dish-list">
-      <div class="top-dish">
-        <img src="https://source.unsplash.com/400x300/?gulasch" alt="Hausgemachtes Gulasch">
-        <div class="info">
-          <div class="name">Hausgemachtes Gulasch</div>
-          <div class="stars">⭐⭐⭐⭐⭐</div>
-        </div>
-      </div>
-      <div class="top-dish">
-        <img src="https://source.unsplash.com/400x300/?lasagna" alt="Veggie-Lasagne">
-        <div class="info">
-          <div class="name">Veggie-Lasagne</div>
-          <div class="stars">⭐⭐⭐⭐✰</div>
-        </div>
-      </div>
-      <div class="top-dish">
-        <img src="https://source.unsplash.com/400x300/?soup" alt="Kürbis-Ingwer-Suppe">
-        <div class="info">
-          <div class="name">Kürbis-Ingwer-Suppe</div>
-          <div class="stars">⭐⭐⭐⭐⭐</div>
-        </div>
-      </div>
-    </div>
-  </section>
+  <div class="main-wrapper">
+    <nav>
+      <h1>HeimHunger 🍲</h1>
+      <div id="sidebar-links"></div>
+    </nav>
 
-  <div class="filters">
-    <input type="text" id="searchInput" placeholder="Ort oder Gericht suchen..." />
-    <select id="sortSelect">
-      <option value="name">Sortieren nach Name</option>
-      <option value="price">Sortieren nach Preis</option>
-      <option value="pickup_time">Sortieren nach Zeit</option>
-    </select>
+    <main>
+      <div class="user-greeting" id="greeting"></div>
+
+      <h2>🔥 Top-Gerichte der Woche</h2>
+      <div class="top-meals">
+        <div class="card">
+          <img src="https://www.kochform.de/ab/rezepte/1026/Maultaschenpfanne_LB1.jpg">
+          <div>
+            <strong>Maultaschen geschmelzt</strong><br>
+            Hausgemacht mit Zwiebeln & Salat
+          </div>
+        </div>
+        <div class="card">
+          <img src="https://image.essen-und-trinken.de/11916862/t/qM/v8/w1440/r1/-/sauerbraten-a9bb7109a5987231f2dc9fa1e251149d-et2012110921-jpg--6089-.jpg">
+          <div>
+            <strong>Sauerbraten</strong><br>
+            Mit Rotkohl & Klößen – 100 % Oma-Rezept
+          </div>
+        </div>
+        <div class="card">
+          <img src="https://d3sogz1xcg542t.cloudfront.net/media/image/dd/34/fa/Bratwurst-mit-Sauerkraut-und-Kartoffelstampf-4-3_1920x1920.jpg">
+          <div>
+            <strong>Bratwurst mit Sauerkraut</strong><br>
+            Rustikal & frisch gekocht von Max
+          </div>
+        </div>
+        <div class="card">
+          <img src="https://image.essen-und-trinken.de/13578662/t/53/v4/w960/r1/-/fjt2021110130-kaesespaetzle-mit-speck.jpg">
+          <div>
+            <strong>Käsespätzle deluxe</strong><br>
+            Mit Sahnesoße & knusprigen Röstzwiebeln
+          </div>
+        </div>
+        <div class="card">
+          <img src="https://img.chefkoch-cdn.de/rezepte/463131139405875/bilder/1369608/crop-960x720/schwarzwaelder-kirschtorte-super-easy.jpg">
+          <div>
+            <strong>Schwarzwälder Kirschtorte</strong><br>
+            Süßes Highlight zum Mitnehmen 🍒
+          </div>
+        </div>
+      </div>
+
+      <h2>Entdecke frische, heimische Gerichte 🍽️</h2>
+      <div class="filters">
+        <input type="text" id="searchInput" placeholder="Ort oder Gericht suchen..." />
+        <select id="sortSelect">
+          <option value="name">Sortieren nach Name</option>
+          <option value="price">Sortieren nach Preis</option>
+          <option value="pickup_time">Sortieren nach Zeit</option>
+        </select>
+      </div>
+      <div class="meal-list" id="mealList"></div>
+    </main>
   </div>
 
-  <div class="meal-list" id="mealList"></div>
+  <footer>
+    <p>&copy; 2025 HeimHunger – Heimisches Essen von Hobbyköchen zur Abholung.</p>
+    <p>
+      <a href="agb.html">AGB</a>
+      <a href="datenschutz.html">Datenschutz</a>
+      <a href="impressum.html">Impressum</a>
+    </p>
+  </footer>
 
   <script type="module">
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-    const supabaseUrl = 'https://qqhrtpbazuupayhvelrm.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxaHJ0cGJhenV1cGF5aHZlbHJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjEyODgsImV4cCI6MjA2Mjc5NzI4OH0.wuT6wBQByGUwoUYyWE0cGBETE3AH2H5fYPYYFfSvznw';
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    const supabase = createClient(
+      'https://qqhrtpbazuupayhvelrm.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxaHJ0cGJhenV1cGF5aHZlbHJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjEyODgsImV4cCI6MjA2Mjc5NzI4OH0.wuT6wBQByGUwoUYyWE0cGBETE3AH2H5fYPYYFfSvznw'
+    );
+
+    const { data: { user }, error } = await supabase.auth.getUser();
+
+    const sidebar = document.getElementById('sidebar-links');
+    const greeting = document.getElementById('greeting');
+
+    if (!user) {
+      window.location.href = "index.html";
+    } else {
+      greeting.textContent = `👋 Hallo, ${user.user_metadata?.name || user.email}`;
+      sidebar.innerHTML = `
+        <a href="explore.html">Gerichte entdecken</a>
+        <a href="post.html">Gericht posten</a>
+        <a href="customer.html">Mein Bereich</a>
+        <a href="agb.html">AGB</a>
+        <a href="datenschutz.html">Datenschutz</a>
+        <a href="#" onclick="logout()">🔒 Logout</a>
+      `;
+    }
+
+    async function logout() {
+      await supabase.auth.signOut();
+      window.location.href = "index.html";
+    }
 
     async function fetchMeals() {
       const { data, error } = await supabase.from('meals').select('*');
@@ -246,5 +308,6 @@
 
     fetchMeals();
   </script>
+
 </body>
 </html>
