@@ -5,71 +5,106 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Mein Bereich – HeimHunger</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      background: #fce9dc;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #fce9dc;
       color: #3b1f0b;
-      font-family: 'Arial', sans-serif;
-      margin: 0;
-      padding: 0;
-    }
-    header {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1.2rem 2rem;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .banner {
+      height: 250px;
+      background: url('https://wallpapers.com/images/featured/food-4k-1pf6px6ryqfjtnyr.jpg') center/cover no-repeat;
+      width: 100%;
+    }
+
+    .main-wrapper {
+      display: flex;
+      flex: 1;
+    }
+
+    nav {
+      width: 220px;
       background-color: #fff3e7;
+      padding: 2rem 1rem;
+      flex-shrink: 0;
     }
-    header a {
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-    }
-    header img {
-      height: 60px;
-      margin-right: 0.8rem;
-    }
-    header h1 {
-      font-size: 1.5rem;
+
+    nav h1 {
+      font-size: 1.6rem;
       color: #5c2b10;
-      margin: 0;
+      margin-bottom: 2rem;
     }
-    header button {
-      background-color: #a33d1e;
-      color: white;
-      border: none;
-      padding: 0.6rem 1rem;
-      border-radius: 10px;
-      cursor: pointer;
-      margin-left: 0.5rem;
+
+    nav a {
+      display: block;
+      margin: 1rem 0;
+      color: #7a2e0b;
+      text-decoration: none;
+      font-weight: bold;
     }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    main {
+      padding: 2rem;
+      width: 100%;
+    }
+
     .container {
-      max-width: 800px;
-      margin: 2rem auto;
+      max-width: 700px;
+      margin: auto;
       background: white;
       padding: 2rem;
       border-radius: 12px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
+
     h2 {
       color: #7a2e0b;
     }
+
     .info {
       margin-bottom: 1.5rem;
     }
+
     .label {
       font-weight: bold;
       color: #5c2b10;
     }
+
     .value {
       margin-left: 0.5rem;
       color: #333;
     }
+
+    button.logout-btn {
+      background-color: #a33d1e;
+      color: white;
+      border: none;
+      padding: 0.7rem 1.2rem;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
+
     footer {
       background: #fff3e7;
       padding: 2rem;
       text-align: center;
       font-size: 0.9rem;
+      margin-top: auto;
     }
+
     footer a {
       margin: 0 1rem;
       color: #7a2e0b;
@@ -79,23 +114,29 @@
 </head>
 <body>
 
-  <header>
-    <a href="explore.html">
-      <img src="logo.png" alt="Logo" />
-      <h1>HeimHunger</h1>
-    </a>
-    <div>
-      <button onclick="location.href='explore.html'">Zurück</button>
-      <button onclick="logout()">Logout</button>
-    </div>
-  </header>
+  <div class="banner"></div>
 
-  <div class="container">
-    <h2>👋 Willkommen in deinem Bereich</h2>
-    <div class="info"><span class="label">📧 E-Mail:</span><span class="value" id="email">–</span></div>
-    <div class="info"><span class="label">🛍️ Letzte Bestellung:</span><span class="value">Maultaschen mit Zwiebeln – 14.05.2025</span></div>
-    <div class="info"><span class="label">🏠 Adresse:</span><span class="value">Beispielstraße 12, 12345 Musterstadt</span></div>
-    <div class="info"><span class="label">⭐ Mitglied seit:</span><span class="value">März 2025</span></div>
+  <div class="main-wrapper">
+    <nav>
+      <h1>HeimHunger 🍲</h1>
+      <a href="explore.html">Gerichte entdecken</a>
+      <a href="post.html">Gericht posten</a>
+      <a href="customer.html">Mein Bereich</a>
+      <a href="agb.html">AGB</a>
+      <a href="datenschutz.html">Datenschutz</a>
+      <a href="index.html">🔒 Logout</a>
+    </nav>
+
+    <main>
+      <div class="container">
+        <h2>👋 Willkommen in deinem Bereich</h2>
+        <div class="info"><span class="label">📧 E-Mail:</span><span class="value" id="email">–</span></div>
+        <div class="info"><span class="label">🛍️ Letzte Bestellung:</span><span class="value">Maultaschen mit Zwiebeln – 14.05.2025</span></div>
+        <div class="info"><span class="label">🏠 Adresse:</span><span class="value">Beispielstraße 12, 12345 Musterstadt</span></div>
+        <div class="info"><span class="label">⭐ Mitglied seit:</span><span class="value">März 2025</span></div>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+      </div>
+    </main>
   </div>
 
   <footer>
