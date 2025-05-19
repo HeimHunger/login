@@ -1,48 +1,148 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HeimHunger – Gericht posten</title>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HeimHunger – Gericht posten & Marktplatz</title>
   <style>
     * { box-sizing: border-box; }
-    body { margin: 0; font-family: Arial, sans-serif; background-color: #fce9dc; color: #3b1f0b; display: flex; flex-direction: column; min-height: 100vh; }
-    .banner { background: url('https://wallpapers.com/images/featured/food-4k-1pf6px6ryqfjtnyr.jpg') center/cover no-repeat; height: 200px; width: 100%; }
-    .main-wrapper { display: flex; flex: 1; }
-    nav { width: 220px; background-color: #fff3e7; padding: 2rem 1rem; flex-shrink: 0; }
-    nav h1 { font-size: 1.6rem; color: #5c2b10; margin-bottom: 2rem; }
-    nav a, nav button { display: block; margin: 0.75rem 0; color: #7a2e0b; text-decoration: none; font-weight: bold; cursor: pointer; border: none; background: none; padding: 0; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #fce9dc;
+      color: #3b1f0b;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    .banner {
+      background: url('https://wallpapers.com/images/featured/food-4k-1pf6px6ryqfjtnyr.jpg') center/cover no-repeat;
+      height: 200px;
+      width: 100%;
+    }
+    .main-wrapper {
+      display: flex;
+      flex: 1;
+    }
+    nav {
+      width: 220px;
+      background-color: #fff3e7;
+      padding: 2rem 1rem;
+      flex-shrink: 0;
+    }
+    nav h1 {
+      font-size: 1.6rem;
+      color: #5c2b10;
+      margin-bottom: 1.5rem;
+    }
+    nav a, nav button {
+      display: block;
+      margin: 0.5rem 0;
+      color: #7a2e0b;
+      background: none;
+      border: none;
+      padding: 0;
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+      text-decoration: none;
+      font-weight: bold;
+    }
     nav a:hover, nav button:hover { text-decoration: underline; }
-    main { padding: 2rem; width: 100%; }
-    .tabs { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
-    .tabs button { padding: 0.5rem 1rem; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; background: #eee; }
-    .tabs button.active { background-color: #a33d1e; color: #fff; }
+    main {
+      padding: 2rem;
+      width: 100%;
+    }
+    .tabs {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .tabs button {
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      background: #eee;
+    }
+    .tabs button.active {
+      background-color: #a33d1e;
+      color: #fff;
+    }
     .tab-content { display: none; }
     .tab-content.active { display: block; }
-    .meal-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
-    .meal-card { position: relative; background-color: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-    .meal-card.star::before { content: '★'; position: absolute; top: 8px; right: 12px; font-size: 1.5rem; color: gold; }
-    .meal-card img { width: 100%; height: 180px; object-fit: cover; }
-    .meal-card .content { padding: 1rem; }
-    .meal-card .title { font-size: 1.2rem; font-weight: bold; color: #5c2b10; }
-    .meal-card .desc { margin-top: 0.5rem; color: #5f5f5f; }
-    .meal-card .time { margin-top: 0.5rem; font-size: 0.85rem; color: #888; }
-    #map { width: 100%; height: 300px; border-radius: 12px; margin-top: 1rem; }
-    footer { background: #fff3e7; padding: 1.5rem; text-align: center; font-size: 0.9rem; }
+    .status { margin-top: 1rem; font-size: 0.95rem; }
+    .status.success { color: green; }
+    .status.error   { color: red; }
+    .meal-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+    .meal-card {
+      position: relative;
+      background-color: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .meal-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+    .meal-card .content {
+      padding: 1rem;
+    }
+    .meal-card .title {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #5c2b10;
+    }
+    .meal-card .desc {
+      margin-top: 0.5rem;
+      color: #5f5f5f;
+    }
+    .meal-card .time {
+      margin-top: 0.5rem;
+      font-size: 0.85rem;
+      color: #888;
+    }
+    .meal-card .star {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      font-size: 1.5rem;
+      color: gold;
+    }
+    #map {
+      width: 100%;
+      max-width: 900px;
+      height: 320px;
+      border-radius: 12px;
+      margin-top: 1rem;
+    }
+    footer {
+      background: #fff3e7;
+      padding: 1.5rem;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+    footer a {
+      margin: 0 1rem;
+      color: #7a2e0b;
+      text-decoration: none;
+    }
   </style>
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZvGocBAsVTSOcAe_Qe2Kx8tF83BeN4U4&callback=initMap"></script>
+  <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZvGocBAsVTSOcAe_Qe2Kx8tF83BeN4U4&callback=initMap" defer></script>
 </head>
 <body>
   <div class="banner"></div>
   <div class="main-wrapper">
     <nav>
       <h1>HeimHunger 🍲</h1>
-      <div id="sidebar-links">
-        <a href="#tab-post">Neues Gericht</a>
-        <a href="#tab-list">Meine Gerichte</a>
-        <a href="#tab-market">Gerichte Marktplatz</a>
-        <button id="logout">🔒 Logout</button>
-      </div>
+      <div id="sidebar-links"></div>
     </nav>
     <main>
       <div class="tabs">
@@ -50,120 +150,152 @@
         <button id="tab-list">Meine Gerichte</button>
         <button id="tab-market">Gerichte Marktplatz</button>
       </div>
-      <!-- Post-Tab bleibt leer -->
+
+      <!-- Tab 1: Neues Gericht (auskommentiert) -->
       <section id="content-post" class="tab-content active">
-        <p>Formular auskommentiert – wird später per Supabase realisiert.</p>
+        <p><em>Formular auskommentiert – wird später per Supabase realisiert.</em></p>
       </section>
-      <!-- Meine-Gerichte-Tab -->
+
+      <!-- Tab 2: Meine Gerichte (Fake) -->
       <section id="content-list" class="tab-content">
-        <div class="meal-list" id="myMeals">
-          <!-- Fake-Einträge -->
-          <div class="meal-card star">
-            <img src="https://via.placeholder.com/280x180?text=Pilzragout" alt="Pilzragout" />
-            <div class="content">
-              <div class="title">Pilzragout</div>
-              <div class="desc">Hausgemachtes Ragout mit Waldpilzen.</div>
-              <div class="time">Abholung: heute 18:00</div>
-            </div>
-          </div>
-          <!-- weitere 4 Fake-Einträge -->
-          <div class="meal-card star">
-            <img src="https://via.placeholder.com/280x180?text=Kürbissuppe" alt="Kürbissuppe" />
-            <div class="content">
-              <div class="title">Kürbissuppe</div>
-              <div class="desc">Samtige Suppe mit Ingwer.</div>
-              <div class="time">Abholung: morgen 12:00</div>
-            </div>
-          </div>
-          <div class="meal-card star">
-            <img src="https://via.placeholder.com/280x180?text=Veganer+Bowl" alt="Veganer Bowl" />
-            <div class="content">
-              <div class="title">Veganer Bowl</div>
-              <div class="desc">Reis, Avocado, Tofu.</div>
-              <div class="time">Abholung: heute 13:00</div>
-            </div>
-          </div>
-          <div class="meal-card star">
-            <img src="https://via.placeholder.com/280x180?text=Apfelstrudel" alt="Apfelstrudel" />
-            <div class="content">
-              <div class="title">Apfelstrudel</div>
-              <div class="desc">Mit Vanillesoße.</div>
-              <div class="time">Abholung: morgen 15:00</div>
-            </div>
-          </div>
-          <div class="meal-card star">
-            <img src="https://via.placeholder.com/280x180?text=Bratkartoffeln" alt="Bratkartoffeln" />
-            <div class="content">
-              <div class="title">Bratkartoffeln</div>
-              <div class="desc">Knusprig gebraten.</div>
-              <div class="time">Abholung: heute 17:00</div>
-            </div>
-          </div>
-        </div>
+        <div class="meal-list" id="myMeals"></div>
       </section>
-      <!-- Marktplatz-Tab -->
+
+      <!-- Tab 3: Marktplatz (Fake + Karte) -->
       <section id="content-market" class="tab-content">
-        <div class="meal-list" id="marketMeals">
-          <!-- Fake Marktplatz-Einträge -->
-          <div class="meal-card">
-            <img src="https://via.placeholder.com/280x180?text=Spätzle" alt="Spätzle" />
-            <div class="content">
-              <div class="title">Oma Spätzle</div>
-              <div class="desc">Hausgemachte Spätzle nach Omas Rezept.</div>
-              <div class="time">Abholung: heute 16:00</div>
-            </div>
-          </div>
-          <div class="meal-card">
-            <img src="https://via.placeholder.com/280x180?text=Currywurst" alt="Currywurst" />
-            <div class="content">
-              <div class="title">Berliner Currywurst</div>
-              <div class="desc">Mit Pommes.</div>
-              <div class="time">Abholung: heute 14:00</div>
-            </div>
-          </div>
-          <div class="meal-card">
-            <img src="https://via.placeholder.com/280x180?text=Linseneintopf" alt="Linseneintopf" />
-            <div class="content">
-              <div class="title">Linseneintopf</div>
-              <div class="desc">Deftig & gesund.</div>
-              <div class="time">Abholung: morgen 11:00</div>
-            </div>
-          </div>
-          <div class="meal-card">
-            <img src="https://via.placeholder.com/280x180?text=Pfannkuchen" alt="Pfannkuchen" />
-            <div class="content">
-              <div class="title">Pfannkuchen</div>
-              <div class="desc">Mit Apfelmus.</div>
-              <div class="time">Abholung: heute 19:00</div>
-            </div>
-          </div>
-          <div class="meal-card">
-            <img src="https://via.placeholder.com/280x180?text=Kartoffelsalat" alt="Kartoffelsalat" />
-            <div class="content">
-              <div class="title">Kartoffelsalat</div>
-              <div class="desc">Schnell & lecker.</div>
-              <div class="time">Abholung: morgen 10:00</div>
-            </div>
-          </div>
-        </div>
+        <div class="meal-list" id="marketMeals"></div>
         <div id="map"></div>
       </section>
     </main>
   </div>
-  <script>
-    function initMap() {
+
+  <footer>
+    <p>&copy; 2025 HeimHunger</p>
+    <p>
+      <a href="explore.html">Gerichte entdecken</a>
+      <a href="customer.html">Mein Bereich</a>
+      <a href="agb.html">AGB</a>
+      <a href="datenschutz.html">Datenschutz</a>
+      <a href="impressum.html">Impressum</a>
+    </p>
+  </footer>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+    const supabase = createClient(
+      'https://qqhrtpbazuupayhvelrm.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxaHJ0cGJhenV1cGF5aHZlbHJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjEyODgsImV4cCI6MjA2Mjc5NzI4OH0.wuT6wBQByGUwoUYyWE0cGBETE3AH2H5fYPYYFfSvznw'
+    );
+
+    const sidebar   = document.getElementById('sidebar-links');
+    const tabPost   = document.getElementById('tab-post');
+    const tabList   = document.getElementById('tab-list');
+    const tabMarket = document.getElementById('tab-market');
+    const contPost  = document.getElementById('content-post');
+    const contList  = document.getElementById('content-list');
+    const contMarket= document.getElementById('content-market');
+    const myMeals   = document.getElementById('myMeals');
+    const marketMeals = document.getElementById('marketMeals');
+
+    // Fake-Daten
+    const FAKE_MY_MEALS = [
+      { name: 'Oma’s Kartoffelsalat', description: 'Mit Essig & Öl', image_url: 'https://via.placeholder.com/400x300?text=Kartoffelsalat', pickup_time: '2025-06-01T12:00' },
+      { name: 'Hausgemachte Suppe', description: 'Rindfleisch + Gemüse', image_url: 'https://via.placeholder.com/400x300?text=Suppe', pickup_time: '2025-06-02T13:00' },
+      { name: 'Frikadellen', description: 'Rustikal wie bei Mama', image_url: 'https://via.placeholder.com/400x300?text=Frikadellen', pickup_time: '2025-06-03T14:00' },
+      { name: 'Gemüselasagne', description: 'Vegetarisch & würzig', image_url: 'https://via.placeholder.com/400x300?text=Lasagne', pickup_time: '2025-06-04T15:00' },
+      { name: 'Pfannkuchen', description: 'Mit Apfelmus', image_url: 'https://via.placeholder.com/400x300?text=Pfannkuchen', pickup_time: '2025-06-05T16:00' }
+    ];
+    const FAKE_MARKET = [
+      { name: 'Currywurst Deluxe', description: 'Mit Pommes', image_url: 'https://via.placeholder.com/400x300?text=Currywurst', pickup_time: '2025-06-06T17:00' },
+      { name: 'Rouladen', description: 'Mit Rotkohl', image_url: 'https://via.placeholder.com/400x300?text=Rouladen', pickup_time: '2025-06-07T18:00' },
+      { name: 'Spätzle', description: 'Hausgemacht', image_url: 'https://via.placeholder.com/400x300?text=Spätzle', pickup_time: '2025-06-08T19:00' },
+      { name: 'Schweinebraten', description: 'Mit Knödeln', image_url: 'https://via.placeholder.com/400x300?text=Braten', pickup_time: '2025-06-09T20:00' },
+      { name: 'Bienenstich', description: 'Süße Nachspeise', image_url: 'https://via.placeholder.com/400x300?text=Bienenstich', pickup_time: '2025-06-10T21:00' }
+    ];
+    const FAKE_PLACES = [
+      { lat:48.7758, lng:9.1829 }, { lat:52.52, lng:13.4050 },
+      { lat:50.1109, lng:8.6821 }, { lat:51.2277, lng:6.7735 },
+      { lat:53.5511, lng:9.9937 }
+    ];
+
+    // Initialisierung
+    async function init() {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) return window.location.replace('index.html');
+      supabase.auth.onAuthStateChange((_,s) => { if (!s?.user) window.location.replace('index.html'); });
+      renderSidebar();
+      setupTabs();
+      loadMyMeals();
+    }
+
+    function renderSidebar() {
+      sidebar.innerHTML = `
+        <a href="explore.html">Gerichte entdecken</a>
+        <a href="customer.html">Mein Bereich</a>
+        <hr/>
+        <button id="link-post">Neues Gericht</button>
+        <button id="link-my">Meine Gerichte</button>
+        <button id="link-market">Gerichte Marktplatz</button>
+        <hr/>
+        <button id="logout">🔒 Logout</button>
+      `;
+      document.getElementById('logout').onclick = async () => { await supabase.auth.signOut(); };
+      document.getElementById('link-post').onclick   = () => switchTab('post');
+      document.getElementById('link-my').onclick     = () => { switchTab('list'); loadMyMeals(); };
+      document.getElementById('link-market').onclick = () => { switchTab('market'); loadMarket(); };
+    }
+
+    function setupTabs() {
+      tabPost.onclick   = () => switchTab('post');
+      tabList.onclick   = () => { switchTab('list'); loadMyMeals(); };
+      tabMarket.onclick = () => { switchTab('market'); loadMarket(); };
+    }
+
+    function switchTab(tab) {
+      [tabPost, tabList, tabMarket].forEach(b => b.classList.remove('active'));
+      [contPost, contList, contMarket].forEach(s => s.classList.remove('active'));
+      if (tab==='post')   { tabPost.classList.add('active');   contPost.classList.add('active'); }
+      if (tab==='list')   { tabList.classList.add('active');   contList.classList.add('active'); }
+      if (tab==='market') { tabMarket.classList.add('active'); contMarket.classList.add('active'); }
+    }
+
+    function loadMyMeals() {
+      myMeals.innerHTML = FAKE_MY_MEALS.map(m => `
+        <div class="meal-card">
+          <span class="star">★</span>
+          <img src="${m.image_url}" alt="${m.name}"/>
+          <div class="content">
+            <div class="title">${m.name}</div>
+            <div class="desc">${m.description}</div>
+            <div class="time">Abholung: ${new Date(m.pickup_time).toLocaleString('de-DE')}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function loadMarket() {
+      marketMeals.innerHTML = FAKE_MARKET.map(m => `
+        <div class="meal-card">
+          <img src="${m.image_url}" alt="${m.name}"/>
+          <div class="content">
+            <div class="title">${m.name}</div>
+            <div class="desc">${m.description}</div>
+            <div class="time">Abholung: ${new Date(m.pickup_time).toLocaleString('de-DE')}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    window.initMap = () => {
       const map = new google.maps.Map(document.getElementById('map'), {
         center: { lat: 51.1657, lng: 10.4515 }, zoom: 6
       });
-      const fakeCoords = [
-        { lat: 48.1374, lng: 11.5755 }, { lat: 52.5200, lng: 13.4050 },
-        { lat: 50.9375, lng: 6.9603 }, { lat: 53.5511, lng: 9.9937 },
-        { lat: 48.7758, lng: 9.1829 }
-      ];
-      fakeCoords.forEach((c,i) => {
-        new google.maps.Marker({ position: c, map, title: `Fake Standort ${i+1}` });
+      FAKE_PLACES.forEach(pos => {
+        new google.maps.Marker({ position: pos, map });
       });
-    }
+    };
+
+    init();
   </script>
 </body>
 </html>
