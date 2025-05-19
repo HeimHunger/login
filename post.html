@@ -3,15 +3,26 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gericht posten – HeimHunger</title>
+  <title>HeimHunger – Gericht posten</title>
   <style>
+    * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: Arial, sans-serif;
       background-color: #fce9dc;
       color: #3b1f0b;
       display: flex;
+      flex-direction: column;
       min-height: 100vh;
+    }
+    .banner {
+      background: url('https://wallpapers.com/images/featured/food-4k-1pf6px6ryqfjtnyr.jpg') center/cover no-repeat;
+      height: 200px;
+      width: 100%;
+    }
+    .main-wrapper {
+      display: flex;
+      flex: 1;
     }
     nav {
       width: 220px;
@@ -26,21 +37,19 @@
     }
     nav a, nav button {
       display: block;
-      margin: 1rem 0;
+      margin: 0.75rem 0;
       color: #7a2e0b;
       background: none;
       border: none;
-      font-weight: bold;
+      padding: 0;
+      font: inherit;
       text-align: left;
       cursor: pointer;
       text-decoration: none;
+      font-weight: bold;
     }
     nav a:hover, nav button:hover {
       text-decoration: underline;
-    }
-    .main-wrapper {
-      display: flex;
-      flex: 1;
     }
     main {
       padding: 2rem;
@@ -57,6 +66,7 @@
       border-radius: 8px;
       border: 1px solid #ccc;
       font-size: 1rem;
+      width: 100%;
     }
     button[type="submit"] {
       background-color: #a33d1e;
@@ -66,16 +76,34 @@
       border-radius: 8px;
       font-weight: bold;
       cursor: pointer;
+      font-size: 1rem;
     }
-    .success { color: green; margin-top: 1rem; }
-    .error   { color: red;   margin-top: 1rem; }
+    .status {
+      margin-top: 1rem;
+      font-size: 0.95rem;
+    }
+    .status.success { color: green; }
+    .status.error   { color: red; }
+    footer {
+      background: #fff3e7;
+      padding: 1.5rem;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+    footer a {
+      margin: 0 1rem;
+      color: #7a2e0b;
+      text-decoration: none;
+    }
   </style>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_API_KEY"></script>
 </head>
 <body>
+  <div class="banner"></div>
   <div class="main-wrapper">
     <nav>
       <h1>HeimHunger 🍲</h1>
-      <div id="sidebar-links">Lade Menü…</div>
+      <div id="sidebar-links">Lade…</div>
     </nav>
     <main>
       <h2>🍳 Neues Gericht posten</h2>
@@ -86,10 +114,19 @@
         <input  type="datetime-local" id="pickup_time" required />
         <input  type="url"      id="image_url"    placeholder="Bild-URL" required />
         <button type="submit">Posten</button>
-        <div id="status"></div>
+        <div id="status" class="status"></div>
       </form>
     </main>
   </div>
+  <footer>
+    <p>&copy; 2025 HeimHunger</p>
+    <p>
+      <a href="explore.html">Gerichte entdecken</a>
+      <a href="agb.html">AGB</a>
+      <a href="datenschutz.html">Datenschutz</a>
+      <a href="impressum.html">Impressum</a>
+    </p>
+  </footer>
 
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
@@ -99,79 +136,76 @@
       'PUBLIC_ANON_KEY'
     );
 
-    // Session prüfen und ggf. weiterleiten
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-    if (sessionError) console.error('Session-Fehler:', sessionError.message);
-    if (!session) {
-      window.location.href = 'index.html';
-      throw new Error('Keine aktive Session');
-    }
-    const user = session.user;
-
-    // Sidebar dynamisch befüllen
     const sidebar = document.getElementById('sidebar-links');
-    sidebar.innerHTML = `
-      <a href="explore.html">Gerichte entdecken</a>
-      <a href="post.html">Gericht posten</a>
-      <a href="customer.html">Mein Bereich</a>
-      <a href="agb.html">AGB</a>
-      <a href="datenschutz.html">Datenschutz</a>
-      <button id="logout">🔒 Logout</button>
-    `;
-    document.getElementById('logout').addEventListener('click', async () => {
-      await supabase.auth.signOut();
-      window.location.href = 'index.html';
-    });
-
-    // Formular-Handling
+    const statusEl = document.getElementById('status');
     const form = document.getElementById('mealForm');
-    const status = document.getElementById('status');
 
-    form.addEventListener('submit', async (e) => {
+    async function setupSidebar() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return window.location.replace('index.html');
+      sidebar.innerHTML = `
+        <a href="explore.html">Gerichte entdecken</a>
+        <a href="post.html">Gericht posten</a>
+        <a href="customer.html">Mein Bereich</a>
+        <button id="logout">🔒 Logout</button>
+      `;
+      document.getElementById('logout').onclick = async () => {
+        await supabase.auth.signOut();
+        window.location.replace('index.html');
+      };
+    }
+
+    form.addEventListener('submit', async e => {
       e.preventDefault();
-      status.textContent = '';
-      status.className = '';
+      statusEl.textContent = '';
+      statusEl.className = 'status';
 
-      const name        = form.name.value.trim();
+      const name = form.name.value.trim();
       const description = form.description.value.trim();
-      const price       = parseFloat(form.price.value);
+      const price = parseFloat(form.price.value);
       const pickup_time = form.pickup_time.value;
-      const image_url   = form.image_url.value.trim();
+      const image_url = form.image_url.value.trim();
 
-      if (!name || !description || !pickup_time || isNaN(price)) {
-        status.textContent = 'Bitte alle Felder korrekt ausfüllen.';
-        status.className = 'error';
+      if (!name || !description || isNaN(price) || !pickup_time) {
+        statusEl.textContent = 'Bitte alle Felder korrekt ausfüllen.';
+        statusEl.classList.add('error');
         return;
       }
 
-      // Adresse aus user_metadata
-      const meta = user.user_metadata;
-      const address = `${meta.street} ${meta.house_number}, ${meta.zip} ${meta.city}, ${meta.country}`;
-      const geoUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=GOOGLE_API_KEY`;
+      const { data: { user } } = await supabase.auth.getUser();
+      const meta = user.user_metadata || {};
+      const address = `${meta.street || ''} ${meta.house_number || ''}, ${meta.zip || ''} ${meta.city || ''}, ${meta.country || ''}`.trim();
+      if (!address) {
+        statusEl.textContent = 'Bitte erst Adresse in deinem Profil hinterlegen.';
+        statusEl.classList.add('error');
+        return;
+      }
 
       try {
-        const geoRes = await fetch(geoUrl);
-        const geoData = await geoRes.json();
-        if (geoData.status !== 'OK') throw new Error('Adresse konnte nicht geokodiert werden');
-
-        const { lat, lng } = geoData.results[0].geometry.location;
-
-        const { error: insertError } = await supabase
-          .from('meals')
-          .insert([{ name, description, price, pickup_time, image_url, latitude: lat, longitude: lng }]);
-
-        if (insertError) {
-          throw insertError;
+        const geoRes = await fetch(
+          `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=YOUR_GOOGLE_API_KEY`
+        );
+        const geoJson = await geoRes.json();
+        if (geoJson.status !== 'OK' || !geoJson.results.length) {
+          throw new Error('Adresse konnte nicht geokodiert werden');
         }
+        const { lat, lng } = geoJson.results[0].geometry.location;
 
-        status.textContent = '✅ Gericht erfolgreich gepostet!';
-        status.className = 'success';
+        const { error } = await supabase
+          .from('meals')
+          .insert([{ name, description, price, pickup_time, image_url, latitude: lat, longitude: lng, user_id: user.id }]);
+        if (error) throw error;
+
+        statusEl.textContent = '✅ Gericht erfolgreich gepostet!';
+        statusEl.classList.add('success');
         form.reset();
       } catch (err) {
-        status.textContent = `❌ Fehler: ${err.message}`;
-        status.className = 'error';
+        statusEl.textContent = `❌ Fehler: ${err.message}`;
+        statusEl.classList.add('error');
       }
     });
+
+    await setupSidebar();
   </script>
 </body>
 </html>
