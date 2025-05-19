@@ -34,35 +34,42 @@
       display: flex;
       flex: 1;
     }
+
+    /* Sidebar identical to post.html */
     nav {
       width: 220px;
       background-color: var(--card-bg);
       padding: 2rem 1rem;
       box-shadow: 2px 0 8px rgba(0,0,0,0.05);
+      flex-shrink: 0;
     }
     nav h1 {
-      font-size: 1.8rem;
+      font-size: 1.6rem;
       color: var(--primary);
-      margin-bottom: 1.5rem;
+      margin-bottom: 2rem;
       text-align: center;
     }
-    nav a, nav button {
+    nav a,
+    nav button {
       display: block;
-      padding: 0.5rem 0.75rem;
-      margin: 0.5rem 0;
+      padding: 0.75rem;
+      margin: 0.75rem 0;
       font-weight: 600;
       color: var(--text-dark);
       text-decoration: none;
       background: none;
       border: none;
-      border-radius: 6px;
+      border-radius: 8px;
       cursor: pointer;
       transition: background 0.2s, color 0.2s;
+      text-align: left;
     }
-    nav a:hover, nav button:hover {
-      background: var(--primary);
+    nav a:hover,
+    nav button:hover {
+      background-color: var(--primary);
       color: white;
     }
+
     main {
       flex: 1;
       padding: 2rem;
@@ -152,15 +159,17 @@
       margin-bottom: 2rem;
       box-shadow: 0 2px 8px rgba(0,0,0,0.06);
     }
+
+    /* Footer identical to post.html */
     footer {
-      background: var(--card-bg);
+      background-color: var(--card-bg);
       padding: 1.5rem;
       text-align: center;
       font-size: 0.9rem;
       border-top: 1px solid var(--border);
     }
     footer a {
-      margin: 0 0.5rem;
+      margin: 0 1rem;
       color: var(--text-dark);
       text-decoration: none;
       font-weight: 600;
@@ -170,6 +179,7 @@
     }
   </style>
 </head>
+
 <body>
   <div class="banner"></div>
   <div class="main-wrapper">
@@ -182,7 +192,7 @@
 
       <h2 class="section-title">Entdecke frische, heimische Gerichte</h2>
       <div class="filters">
-        <input type="text" id="searchInput" placeholder="Ort oder Gericht suchen…" />
+        <input type="text" id="searchInput" placeholder="Ort oder Gericht suchen…"/>
         <select id="sortSelect">
           <option value="name">Sortieren nach Name</option>
           <option value="price">Sortieren nach Preis</option>
@@ -195,7 +205,7 @@
       <h2 class="section-title">🔥 Top-Gerichte der Woche</h2>
       <div class="top-meals">
         <div class="card">
-          <img src="https://via.placeholder.com/400x300?text=Maultaschen" alt="Maultaschen geschmelzt">
+          <img src="https://via.placeholder.com/400x300?text=Maultaschen" alt="Maultaschen">
           <div><strong>Maultaschen geschmelzt</strong><br>Hausgemacht mit Zwiebeln & Salat</div>
         </div>
         <div class="card">
@@ -203,7 +213,7 @@
           <div><strong>Sauerbraten</strong><br>Mit Rotkohl & Klößen – 100 % Oma-Rezept</div>
         </div>
         <div class="card">
-          <img src="https://via.placeholder.com/400x300?text=Bratwurst" alt="Bratwurst mit Sauerkraut">
+          <img src="https://via.placeholder.com/400x300?text=Bratwurst" alt="Bratwurst">
           <div><strong>Bratwurst mit Sauerkraut</strong><br>Rustikal & frisch gekocht von Max</div>
         </div>
       </div>
@@ -224,10 +234,8 @@
     </p>
   </footer>
 
-  <!-- Supabase + Logik -->
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-
     const supabase = createClient(
       'https://qqhrtpbazuupayhvelrm.supabase.co',
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxaHJ0cGJhenV1cGF5aHZlbHJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjEyODgsImV4cCI6MjA2Mjc5NzI4OH0.wuT6wBQByGUwoUYyWE0cGBETE3AH2H5fYPYYFfSvznw'
@@ -242,15 +250,13 @@
       greeting.textContent = user
         ? `👋 Hallo, ${user.user_metadata?.name || user.email}`
         : '';
-      let html = '';
+      let links = '';
       if (user) {
-        html += `
-          <button id="logout">🔒 Logout</button>
-        `;
+        links += `<button id="logout">🔒 Logout</button>`;
       } else {
-        html += `<a href="index.html">Anmelden</a>`;
+        links += `<a href="index.html">Anmelden</a>`;
       }
-      html += `
+      links += `
         <hr/>
         <a href="post.html">Anbieten</a>
         <a href="customer.html">Mein Bereich</a>
@@ -260,7 +266,7 @@
         <a href="datenschutz.html">Datenschutz</a>
         <a href="impressum.html">Impressum</a>
       `;
-      sidebar.innerHTML = html;
+      sidebar.innerHTML = links;
       if (user) {
         document.getElementById('logout').onclick = async () => {
           await supabase.auth.signOut();
@@ -285,14 +291,12 @@
       const container = document.getElementById('mealList');
       const search = document.getElementById('searchInput').value.toLowerCase();
       const sortBy = document.getElementById('sortSelect').value;
-
       const filtered = meals
         .filter(m =>
           m.name.toLowerCase().includes(search) ||
           m.description.toLowerCase().includes(search)
         )
         .sort((a, b) => a[sortBy] > b[sortBy] ? 1 : -1);
-
       container.innerHTML = filtered.map(m => `
         <div class="meal-card">
           <img src="${m.image_url}" alt="${m.name}">
@@ -309,7 +313,6 @@
     document.getElementById('searchInput').addEventListener('input', fetchMeals);
     document.getElementById('sortSelect').addEventListener('change', fetchMeals);
 
-    // initMap wird global gebraucht:
     window.initMap = async () => {
       const meals = await fetchMeals();
       const map = new google.maps.Map(document.getElementById('map'), {
@@ -336,7 +339,7 @@
     });
   </script>
 
-  <!-- Google Maps API ganz am Ende, ruft initMap auf -->
+  <!-- Google Maps API ganz am Ende -->
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZvGocBAsVTSOcAe_Qe2Kx8tF83BeN4U4&callback=initMap" defer></script>
 </body>
 </html>
