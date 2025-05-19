@@ -5,7 +5,71 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>HeimHunger – Gericht posten</title>
   <style>
-    /* (bestehendes CSS unverändert) */
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #fce9dc;
+      color: #3b1f0b;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    .banner {
+      background: url('https://wallpapers.com/images/featured/food-4k-1pf6px6ryqfjtnyr.jpg') center/cover no-repeat;
+      height: 200px;
+      width: 100%;
+    }
+    .main-wrapper {
+      display: flex;
+      flex: 1;
+    }
+    nav {
+      width: 220px;
+      background-color: #fff3e7;
+      padding: 2rem 1rem;
+      flex-shrink: 0;
+    }
+    nav h1 {
+      font-size: 1.6rem;
+      color: #5c2b10;
+      margin-bottom: 2rem;
+    }
+    nav a, nav button {
+      display: block;
+      margin: 0.75rem 0;
+      color: #7a2e0b;
+      background: none;
+      border: none;
+      padding: 0;
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    nav a:hover, nav button:hover { text-decoration: underline; }
+    main { padding: 2rem; width: 100%; }
+    .tabs { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
+    .tabs button { padding: 0.5rem 1rem; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; background: #eee; }
+    .tabs button.active { background-color: #a33d1e; color: #fff; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    form { display: flex; flex-direction: column; gap: 1rem; max-width: 500px; }
+    input, textarea { padding: 0.8rem; border-radius: 8px; border: 1px solid #ccc; font-size: 1rem; width: 100%; }
+    button[type="submit"] { background-color: #a33d1e; color: white; padding: 0.8rem; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem; }
+    .status { margin-top: 1rem; font-size: 0.95rem; }
+    .status.success { color: green; }
+    .status.error   { color: red; }
+    .meal-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+    .meal-card { background-color: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .meal-card img { width: 100%; height: 180px; object-fit: cover; }
+    .meal-card .content { padding: 1rem; }
+    .meal-card .title { font-size: 1.2rem; font-weight: bold; color: #5c2b10; }
+    .meal-card .desc { margin-top: 0.5rem; color: #5f5f5f; }
+    .meal-card .time { margin-top: 0.5rem; font-size: 0.85rem; color: #888; }
+    footer { background: #fff3e7; padding: 1.5rem; text-align: center; font-size: 0.9rem; }
+    footer a { margin: 0 1rem; color: #7a2e0b; text-decoration: none; }
   </style>
   <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZvGocBAsVTSOcAe_Qe2Kx8tF83BeN4U4"></script>
 </head>
@@ -21,7 +85,6 @@
         <button id="tab-post" class="active">Neues Gericht</button>
         <button id="tab-list">Meine Gerichte</button>
       </div>
-
       <!-- Formular-Tab -->
       <section id="content-post" class="tab-content active">
         <form id="mealForm">
@@ -29,13 +92,13 @@
           <textarea id="description" placeholder="Beschreibung" rows="4" required></textarea>
           <input type="number" id="price" placeholder="Preis (€)" step="0.01" required />
           <input type="datetime-local" id="pickup_time" required />
-          <input type="text" id="address" placeholder="Adresse (z.B. Straße Hausnummer, PLZ Ort)" required />
+          <!-- NEUES Feld für Adresse -->
+          <input type="text" id="address" placeholder="Adresse (Straße, Stadt, PLZ)" required />
           <input type="url" id="image_url" placeholder="Bild-URL" required />
           <button type="submit">Posten</button>
           <div id="status" class="status"></div>
         </form>
       </section>
-
       <!-- Meine-Gerichte-Tab -->
       <section id="content-list" class="tab-content">
         <div class="meal-list" id="myMeals"></div>
@@ -44,25 +107,28 @@
   </div>
   <footer>
     <p>&copy; 2025 HeimHunger</p>
+    <p>
+      <a href="explore.html">Gerichte entdecken</a>
+      <a href="agb.html">AGB</a>
+      <a href="datenschutz.html">Datenschutz</a>
+      <a href="impressum.html">Impressum</a>
+    </p>
   </footer>
-
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-    const supabase = createClient('https://qqhrtpbazuupayhvelrm.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxaHJ0cGJhenV1cGF5aHZlbHJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjEyODgsImV4cCI6MjA2Mjc5NzI4OH0.wuT6wBQByGUwoUYyWE0cGBETE3AH2H5fYPYYFfSvznw');
-
-    // Elemente
+    const supabase = createClient(
+      'https://qqhrtpbazuupayhvelrm.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxaHJ0cGJhenV1cGF5aHZlbHJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjEyODgsImV4cCI6MjA2Mjc5NzI4OH0.wuT6wBQByGUwoUYyWE0cGBETE3AH2H5fYPYYFfSvznw'
+    );
     const sidebar = document.getElementById('sidebar-links');
     const statusEl = document.getElementById('status');
-    const form     = document.getElementById('mealForm');
-    const tabPost  = document.getElementById('tab-post');
-    const tabList  = document.getElementById('tab-list');
-    const contPost = document.getElementById('content-post');
-    const contList = document.getElementById('content-list');
-    const myMeals  = document.getElementById('myMeals');
+    const form      = document.getElementById('mealForm');
+    const tabPost   = document.getElementById('tab-post');
+    const tabList   = document.getElementById('tab-list');
+    const contPost  = document.getElementById('content-post');
+    const contList  = document.getElementById('content-list');
+    const myMeals   = document.getElementById('myMeals');
     let currentUser = null;
-
-    // Initialisierung
     async function init() {
       const { data: { session } } = await supabase.auth.getSession();
       const user = session?.user;
@@ -72,7 +138,6 @@
       renderSidebar();
       setupTabs();
     }
-
     function renderSidebar() {
       sidebar.innerHTML = `
         <a href="explore.html">Gerichte entdecken</a>
@@ -82,12 +147,10 @@
       `;
       document.getElementById('logout').onclick = async () => await supabase.auth.signOut();
     }
-
     function setupTabs() {
-      tabPost.addEventListener('click', () => switchTab('post'));
-      tabList.addEventListener('click', () => { switchTab('list'); loadMyMeals(); });
+      tabPost.onclick = () => switchTab('post');
+      tabList.onclick = () => { switchTab('list'); loadMyMeals(); };
     }
-
     function switchTab(tab) {
       const isPost = tab === 'post';
       tabPost.classList.toggle('active', isPost);
@@ -95,45 +158,29 @@
       contPost.classList.toggle('active', isPost);
       contList.classList.toggle('active', !isPost);
     }
-
-    // Formular-Handler mit verbessertem Geocoding-Feedback
     form.addEventListener('submit', async e => {
       e.preventDefault();
       statusEl.textContent = '';
       statusEl.className = 'status';
-
       const name        = form.name.value.trim();
       const description = form.description.value.trim();
       const price       = parseFloat(form.price.value);
       const pickup_time = form.pickup_time.value;
       const address     = form.address.value.trim();
       const image_url   = form.image_url.value.trim();
-
       if (!name || !description || isNaN(price) || !pickup_time || !address) {
         statusEl.textContent = 'Bitte alle Felder korrekt ausfüllen.';
         return statusEl.classList.add('error');
       }
-
       try {
         const geoRes = await fetch(
           `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=AIzaSyAZvGocBAsVTSOcAe_Qe2Kx8tF83BeN4U4`
         );
-        const geoJson = await geoRes.json();
-        console.log('Geocoding Response:', geoJson);
-        if (geoJson.status === 'ZERO_RESULTS') {
-          throw new Error('Adresse nicht gefunden. Bitte vollständige Adresse eingeben.');
-        }
-        if (geoJson.status !== 'OK') {
-          throw new Error(`Geocoding-Fehler: ${geoJson.status}`);
-        }
-        const { lat, lng } = geoJson.results[0].geometry.location;
-
-        const { error } = await supabase.from('meals').insert([{ 
-          name, description, price, pickup_time, image_url,
-          latitude: lat, longitude: lng, user_id: currentUser.id
-        }]);
+        const geo = await geoRes.json();
+        if (geo.status !== 'OK') throw new Error('Adresse konnte nicht geokodiert werden');
+        const { lat, lng } = geo.results[0].geometry.location;
+        const { error } = await supabase.from('meals').insert([{ name, description, price, pickup_time, image_url, latitude: lat, longitude: lng, user_id: currentUser.id }]);
         if (error) throw error;
-
         statusEl.textContent = '✅ Gericht erfolgreich gepostet!';
         statusEl.classList.add('success');
         form.reset();
@@ -144,14 +191,9 @@
         statusEl.classList.add('error');
       }
     });
-
-    // Liste eigener Gerichte
     async function loadMyMeals() {
       myMeals.innerHTML = 'Lade…';
-      const { data, error } = await supabase.from('meals')
-        .select('name,description,image_url,pickup_time')
-        .eq('user_id', currentUser.id)
-        .order('created_at', { ascending: false });
+      const { data, error } = await supabase.from('meals').select('name,description,image_url,pickup_time').eq('user_id', currentUser.id).order('created_at', { ascending: false });
       if (error) return myMeals.textContent = 'Fehler beim Laden Ihrer Gerichte';
       if (!data.length) return myMeals.textContent = 'Sie haben noch keine Gerichte gepostet.';
       myMeals.innerHTML = data.map(m => `
@@ -165,7 +207,6 @@
         </div>
       `).join('');
     }
-
     init();
   </script>
 </body>
