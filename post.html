@@ -85,17 +85,21 @@
         <button id="tab-post" class="active">Neues Gericht</button>
         <button id="tab-list">Meine Gerichte</button>
       </div>
+      <!-- Formular-Tab -->
       <section id="content-post" class="tab-content active">
         <form id="mealForm">
           <input type="text" id="name" placeholder="Name des Gerichts" required />
           <textarea id="description" placeholder="Beschreibung" rows="4" required></textarea>
           <input type="number" id="price" placeholder="Preis (€)" step="0.01" required />
           <input type="datetime-local" id="pickup_time" required />
+          <!-- NEUES Feld für Adresse -->
+          <input type="text" id="address" placeholder="Adresse (Straße, Stadt, PLZ)" required />
           <input type="url" id="image_url" placeholder="Bild-URL" required />
           <button type="submit">Posten</button>
           <div id="status" class="status"></div>
         </form>
       </section>
+      <!-- Meine-Gerichte-Tab -->
       <section id="content-list" class="tab-content">
         <div class="meal-list" id="myMeals"></div>
       </section>
@@ -118,34 +122,30 @@
     );
     const sidebar = document.getElementById('sidebar-links');
     const statusEl = document.getElementById('status');
-    const form = document.getElementById('mealForm');
-    const tabPost = document.getElementById('tab-post');
-    const tabList = document.getElementById('tab-list');
-    const contPost = document.getElementById('content-post');
-    const contList = document.getElementById('content-list');
-    const myMeals = document.getElementById('myMeals');
+    const form      = document.getElementById('mealForm');
+    const tabPost   = document.getElementById('tab-post');
+    const tabList   = document.getElementById('tab-list');
+    const contPost  = document.getElementById('content-post');
+    const contList  = document.getElementById('content-list');
+    const myMeals   = document.getElementById('myMeals');
     let currentUser = null;
     async function init() {
       const { data: { session } } = await supabase.auth.getSession();
       const user = session?.user;
       if (!user) return window.location.replace('index.html');
       currentUser = user;
-      supabase.auth.onAuthStateChange((_, s) => {
-        if (!s?.user) window.location.replace('index.html');
-      });
-      renderSidebar(user);
+      supabase.auth.onAuthStateChange((_, s) => { if (!s?.user) window.location.replace('index.html'); });
+      renderSidebar();
       setupTabs();
     }
-    function renderSidebar(user) {
+    function renderSidebar() {
       sidebar.innerHTML = `
         <a href="explore.html">Gerichte entdecken</a>
         <a href="post.html">Gericht posten</a>
         <a href="customer.html">Mein Bereich</a>
         <button id="logout">🔒 Logout</button>
       `;
-      document.getElementById('logout').onclick = async () => {
-        await supabase.auth.signOut();
-      };
+      document.getElementById('logout').onclick = async () => await supabase.auth.signOut();
     }
     function setupTabs() {
       tabPost.onclick = () => switchTab('post');
@@ -162,24 +162,23 @@
       e.preventDefault();
       statusEl.textContent = '';
       statusEl.className = 'status';
-      const name = form.name.value.trim();
+      const name        = form.name.value.trim();
       const description = form.description.value.trim();
-      const price = parseFloat(form.price.value);
+      const price       = parseFloat(form.price.value);
       const pickup_time = form.pickup_time.value;
-      const image_url = form.image_url.value.trim();
-      if (!name || !description || isNaN(price) || !pickup_time) {
+      const address     = form.address.value.trim();
+      const image_url   = form.image_url.value.trim();
+      if (!name || !description || isNaN(price) || !pickup_time || !address) {
         statusEl.textContent = 'Bitte alle Felder korrekt ausfüllen.';
-        statusEl.classList.add('error'); return;
+        return statusEl.classList.add('error');
       }
-      const m = currentUser.user_metadata || {};
-      const address = `${m.street||''} ${m.house_number||''}, ${m.zip||''} ${m.city||''}, ${m.country||''}`.trim();
       try {
         const geoRes = await fetch(
           `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=AIzaSyAZvGocBAsVTSOcAe_Qe2Kx8tF83BeN4U4`
         );
-        const geoJson = await geoRes.json();
-        if (geoJson.status !== 'OK') throw new Error('Adresse konnte nicht geokodiert werden');
-        const { lat, lng } = geoJson.results[0].geometry.location;
+        const geo = await geoRes.json();
+        if (geo.status !== 'OK') throw new Error('Adresse konnte nicht geokodiert werden');
+        const { lat, lng } = geo.results[0].geometry.location;
         const { error } = await supabase.from('meals').insert([{ name, description, price, pickup_time, image_url, latitude: lat, longitude: lng, user_id: currentUser.id }]);
         if (error) throw error;
         statusEl.textContent = '✅ Gericht erfolgreich gepostet!';
@@ -195,8 +194,8 @@
     async function loadMyMeals() {
       myMeals.innerHTML = 'Lade…';
       const { data, error } = await supabase.from('meals').select('name,description,image_url,pickup_time').eq('user_id', currentUser.id).order('created_at', { ascending: false });
-      if (error) { myMeals.textContent = 'Fehler beim Laden Ihrer Gerichte'; return; }
-      if (!data.length) { myMeals.textContent = 'Sie haben noch keine Gerichte gepostet.'; return; }
+      if (error) return myMeals.textContent = 'Fehler beim Laden Ihrer Gerichte';
+      if (!data.length) return myMeals.textContent = 'Sie haben noch keine Gerichte gepostet.';
       myMeals.innerHTML = data.map(m => `
         <div class="meal-card">
           <img src="${m.image_url}" alt="${m.name}" />
