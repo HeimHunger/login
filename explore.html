@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>HeimHunger – Gerichte entdecken</title>
 
-  <!-- Google Font -->
+  <!-- Poppins Font -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
   <style>
@@ -16,9 +16,7 @@
       --card-bg: #ffffff;
       --border: #e0d5c8;
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0 }
-
     body {
       font-family: 'Poppins', sans-serif;
       background-color: var(--bg-light);
@@ -27,18 +25,15 @@
       flex-direction: column;
       min-height: 100vh;
     }
-
     .banner {
       background: url('https://wallpapers.com/images/featured/food-4k-1pf6px6ryqfjtnyr.jpg') center/cover no-repeat;
       height: 200px;
       width: 100%;
     }
-
     .main-wrapper {
       display: flex;
       flex: 1;
     }
-
     nav {
       width: 220px;
       background-color: var(--card-bg);
@@ -63,24 +58,20 @@
     nav a:hover, nav button:hover {
       color: var(--primary);
     }
-
     main {
       flex: 1;
       padding: 2rem;
     }
-
     .user-greeting {
       text-align: right;
       margin-bottom: 1rem;
       font-weight: 600;
     }
-
     h2.section-title {
       font-size: 1.5rem;
       color: var(--primary);
       margin-bottom: 1rem;
     }
-
     .filters {
       display: flex;
       gap: 1rem;
@@ -92,7 +83,6 @@
       padding: 0.75rem 1rem;
       border: 1px solid var(--border);
       border-radius: 8px;
-      font-family: inherit;
       font-size: 1rem;
       outline: none;
       transition: border-color 0.2s;
@@ -101,7 +91,6 @@
     .filters select:focus {
       border-color: var(--primary);
     }
-
     .meal-list,
     .top-meals {
       display: grid;
@@ -109,7 +98,6 @@
       gap: 1.5rem;
       margin-bottom: 2rem;
     }
-
     .meal-card,
     .top-meals .card {
       background-color: var(--card-bg);
@@ -151,7 +139,6 @@
       font-size: 0.85rem;
       color: #888;
     }
-
     #map {
       width: 100%;
       max-width: 900px;
@@ -160,7 +147,6 @@
       margin-bottom: 2rem;
       box-shadow: 0 2px 8px rgba(0,0,0,0.06);
     }
-
     footer {
       background: var(--card-bg);
       padding: 1.5rem;
@@ -178,7 +164,9 @@
       color: var(--primary);
     }
   </style>
-  <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZvGocBAsVTSOcAe_Qe2Kx8tF83BeN4U4&callback=initMap" defer></script>
+
+  <!-- Maps API laden mit defer -->
+  <script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZvGocBAsVTSOcAe_Qe2Kx8tF83BeN4U4&callback=initMap"></script>
 </head>
 
 <body>
@@ -188,11 +176,11 @@
       <h1>HeimHunger 🍲</h1>
       <div id="sidebar-links"></div>
     </nav>
+
     <main>
       <div class="user-greeting" id="greeting"></div>
 
       <h2 class="section-title">Entdecke frische, heimische Gerichte</h2>
-
       <div class="filters">
         <input type="text" id="searchInput" placeholder="Ort oder Gericht suchen…" />
         <select id="sortSelect">
@@ -207,15 +195,15 @@
       <h2 class="section-title">🔥 Top-Gerichte der Woche</h2>
       <div class="top-meals">
         <div class="card">
-          <img src="https://www.kochform.de/ab/rezepte/1026/Maultaschenpfanne_LB1.jpg" alt="Maultaschen geschmelzt">
+          <img src="https://via.placeholder.com/400x300?text=Maultaschen" alt="Maultaschen geschmelzt">
           <div><strong>Maultaschen geschmelzt</strong><br>Hausgemacht mit Zwiebeln & Salat</div>
         </div>
         <div class="card">
-          <img src="https://image.essen-und-trinken.de/11916862/t/qM/v8/w1440/r1/-/sauerbraten.jpg" alt="Sauerbraten">
+          <img src="https://via.placeholder.com/400x300?text=Sauerbraten" alt="Sauerbraten">
           <div><strong>Sauerbraten</strong><br>Mit Rotkohl & Klößen – 100 % Oma-Rezept</div>
         </div>
         <div class="card">
-          <img src="https://d3sogz1xcg542t.cloudfront.net/media/image/dd/34/fa/Bratwurst.jpg" alt="Bratwurst mit Sauerkraut">
+          <img src="https://via.placeholder.com/400x300?text=Bratwurst" alt="Bratwurst mit Sauerkraut">
           <div><strong>Bratwurst mit Sauerkraut</strong><br>Rustikal & frisch gekocht von Max</div>
         </div>
       </div>
@@ -241,32 +229,34 @@
 
     const supabase = createClient(
       'https://qqhrtpbazuupayhvelrm.supabase.co',
-      'eyJ...'  // dein Public-Anon-Key
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxaHJ0cGJhenV1cGF5aHZlbHJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjEyODgsImV4cCI6MjA2Mjc5NzI4OH0.wuT6wBQByGUwoUYyWE0cGBETE3AH2H5fYPYYFfSvznw'
     );
 
     const sidebar = document.getElementById('sidebar-links');
     const greeting = document.getElementById('greeting');
 
-    // Sidebar dynamisch befüllen – keine Umleitung hier!
     async function setupSidebar() {
-      const { data: { user } } = await supabase.auth.getUser();
-      sidebar.innerHTML = '';
-      greeting.textContent = '';
-
-      if (user) {
-        greeting.textContent = `👋 Hallo, ${user.user_metadata?.name || user.email}`;
-        sidebar.innerHTML += `
+      const { data: { session } } = await supabase.auth.getSession();
+      const user = session?.user;
+      greeting.textContent = user
+        ? `👋 Hallo, ${user.user_metadata?.name || user.email}`
+        : '';
+      sidebar.innerHTML = user
+        ? `
           <a href="post.html">Anbieten</a>
           <a href="customer.html">Mein Bereich</a>
+          <hr/>
           <button id="logout">🔒 Logout</button>
-        `;
-        document.getElementById('logout')
-                .onclick = async () => { await supabase.auth.signOut(); window.location.reload(); };
-      } else {
-        sidebar.innerHTML += `<a href="index.html">Anmelden</a>`;
+        `
+        : `<a href="index.html">Anmelden</a>`;
+      if (user) {
+        document.getElementById('logout').onclick = async () => {
+          await supabase.auth.signOut();
+          window.location.reload();
+        };
       }
-
       sidebar.innerHTML += `
+        <hr/>
         <a href="explore.html">Gerichte entdecken</a>
         <a href="agb.html">AGB</a>
         <a href="datenschutz.html">Datenschutz</a>
@@ -274,7 +264,6 @@
       `;
     }
 
-    // Gerichte laden & anzeigen
     async function fetchMeals() {
       const { data: meals, error } = await supabase
         .from('meals')
@@ -293,8 +282,10 @@
       const sortBy = document.getElementById('sortSelect').value;
 
       const filtered = meals
-        .filter(m => m.name.toLowerCase().includes(search) ||
-                     m.description.toLowerCase().includes(search))
+        .filter(m =>
+          m.name.toLowerCase().includes(search) ||
+          m.description.toLowerCase().includes(search)
+        )
         .sort((a, b) => a[sortBy] > b[sortBy] ? 1 : -1);
 
       container.innerHTML = filtered.map(m => `
@@ -313,7 +304,6 @@
     document.getElementById('searchInput').addEventListener('input', fetchMeals);
     document.getElementById('sortSelect').addEventListener('change', fetchMeals);
 
-    // Google Maps Callback
     window.initMap = async () => {
       const meals = await fetchMeals();
       const map = new google.maps.Map(document.getElementById('map'), {
@@ -334,7 +324,6 @@
       });
     };
 
-    // Alles starten
     document.addEventListener('DOMContentLoaded', () => {
       setupSidebar();
       fetchMeals();
