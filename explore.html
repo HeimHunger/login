@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>HeimHunger – Gerichte entdecken</title>
 
@@ -44,19 +44,24 @@
       font-size: 1.8rem;
       color: var(--primary);
       margin-bottom: 1.5rem;
+      text-align: center;
     }
     nav a, nav button {
       display: block;
-      margin: 0.75rem 0;
+      padding: 0.5rem 0.75rem;
+      margin: 0.5rem 0;
       font-weight: 600;
       color: var(--text-dark);
       text-decoration: none;
       background: none;
       border: none;
+      border-radius: 6px;
       cursor: pointer;
+      transition: background 0.2s, color 0.2s;
     }
     nav a:hover, nav button:hover {
-      color: var(--primary);
+      background: var(--primary);
+      color: white;
     }
     main {
       flex: 1;
@@ -164,11 +169,7 @@
       color: var(--primary);
     }
   </style>
-
-  <!-- Maps API laden mit defer -->
-  <script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZvGocBAsVTSOcAe_Qe2Kx8tF83BeN4U4&callback=initMap"></script>
 </head>
-
 <body>
   <div class="banner"></div>
   <div class="main-wrapper">
@@ -176,7 +177,6 @@
       <h1>HeimHunger 🍲</h1>
       <div id="sidebar-links"></div>
     </nav>
-
     <main>
       <div class="user-greeting" id="greeting"></div>
 
@@ -224,6 +224,7 @@
     </p>
   </footer>
 
+  <!-- Supabase + Logik -->
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
@@ -241,33 +242,37 @@
       greeting.textContent = user
         ? `👋 Hallo, ${user.user_metadata?.name || user.email}`
         : '';
-      sidebar.innerHTML = user
-        ? `
-          <a href="post.html">Anbieten</a>
-          <a href="customer.html">Mein Bereich</a>
-          <hr/>
-          <button id="logout">🔒 Logout</button>
-        `
-        : `<a href="index.html">Anmelden</a>`;
+      let html = '';
       if (user) {
-        document.getElementById('logout').onclick = async () => {
-          await supabase.auth.signOut();
-          window.location.reload();
-        };
+        html += `
+          <button id="logout">🔒 Logout</button>
+        `;
+      } else {
+        html += `<a href="index.html">Anmelden</a>`;
       }
-      sidebar.innerHTML += `
+      html += `
+        <hr/>
+        <a href="post.html">Anbieten</a>
+        <a href="customer.html">Mein Bereich</a>
         <hr/>
         <a href="explore.html">Gerichte entdecken</a>
         <a href="agb.html">AGB</a>
         <a href="datenschutz.html">Datenschutz</a>
         <a href="impressum.html">Impressum</a>
       `;
+      sidebar.innerHTML = html;
+      if (user) {
+        document.getElementById('logout').onclick = async () => {
+          await supabase.auth.signOut();
+          window.location.replace('index.html');
+        };
+      }
     }
 
     async function fetchMeals() {
       const { data: meals, error } = await supabase
         .from('meals')
-        .select('name, description, image_url, price, pickup_time, latitude, longitude');
+        .select('name,description,image_url,price,pickup_time,latitude,longitude');
       if (error) {
         document.getElementById('mealList').textContent = 'Fehler beim Laden der Gerichte';
         return [];
@@ -304,6 +309,7 @@
     document.getElementById('searchInput').addEventListener('input', fetchMeals);
     document.getElementById('sortSelect').addEventListener('change', fetchMeals);
 
+    // initMap wird global gebraucht:
     window.initMap = async () => {
       const meals = await fetchMeals();
       const map = new google.maps.Map(document.getElementById('map'), {
@@ -329,5 +335,8 @@
       fetchMeals();
     });
   </script>
+
+  <!-- Google Maps API ganz am Ende, ruft initMap auf -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZvGocBAsVTSOcAe_Qe2Kx8tF83BeN4U4&callback=initMap" defer></script>
 </body>
 </html>
