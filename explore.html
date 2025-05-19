@@ -2,123 +2,157 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HeimHunger – Gerichte entdeckenfresseeee</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gerichte entdecken | HeimHunger</title>
+  <!-- Google Maps API -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=DEIN_API_KEY"></script>
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    * { box-sizing: border-box; }
-    body { margin: 0; font-family: Arial, sans-serif; background-color: #fce9dc; color: #3b1f0b; display: flex; flex-direction: column; min-height: 100vh; }
-    .banner { background: url('https://wallpapers.com/images/featured/food-4k-1pf6px6ryqfjtnyr.jpg') center/cover no-repeat; height: 250px; width: 100%; }
-    .main-wrapper { display: flex; flex: 1; }
-    nav { width: 220px; background-color: #fff3e7; padding: 2rem 1rem; flex-shrink: 0; }
-    nav h1 { font-size: 1.6rem; color: #5c2b10; margin-bottom: 1rem; }
-    #greeting { font-size: 1rem; margin-bottom: 1rem; color: #5c2b10; }
-    nav a, nav button { display: block; margin: 1rem 0; color: #7a2e0b; background: none; border: none; font: inherit; text-align: left; cursor: pointer; text-decoration: none; font-weight: bold; }
-    nav a:hover, nav button:hover { text-decoration: underline; }
-    main { padding: 2rem; flex: 1; overflow-y: auto; }
-    .filters { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
-    input, select { padding: 0.7rem; border-radius: 8px; border: 1px solid #ccc; font-size: 1rem; }
-    .meal-list, .top-meals { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
-    .meal-card, .top-meals .card { background-color: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-    .meal-card img, .top-meals img { width: 100%; height: 180px; object-fit: cover; }
-    .content, .top-meals .card div { padding: 1rem; }
-    .title { font-size: 1.2rem; font-weight: bold; color: #5c2b10; }
-    .price { color: #d35f2c; font-weight: bold; margin-top: 0.3rem; }
-    .desc { margin-top: 0.5rem; color: #5f5f5f; font-size: 0.95rem; }
-    .time { margin-top: 0.5rem; font-size: 0.85rem; color: #888; }
-    #map { width: 100%; max-width: 900px; height: 320px; border-radius: 12px; margin-bottom: 2rem; border: 2px solid #a33d1e; }
-    footer { background: #fff3e7; padding: 2rem; text-align: center; font-size: 0.9rem; }
-    footer a { margin: 0 1rem; color: #7a2e0b; text-decoration: none; }
+    /* --- Basis-Layout --- */
+    body {
+      margin: 0;
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      grid-template-rows: auto 1fr auto;
+      min-height: 100vh;
+      font-family: sans-serif;
+    }
+    header, footer {
+      grid-column: 1 / -1;
+      padding: 1rem;
+      background: #f7f7f7;
+      text-align: center;
+    }
+    /* Sidebar */
+    nav {
+      background: #fff;
+      border-right: 1px solid #ddd;
+      padding: 1rem;
+    }
+    nav ul {
+      list-style: none;
+      padding: 0;
+    }
+    nav li + li {
+      margin-top: 0.5rem;
+    }
+    nav a {
+      text-decoration: none;
+      color: #333;
+    }
+    /* Map-Container: max-width und responsive */
+    #map-container {
+      width: 100%;
+      max-width: 800px;    /* hier anpassen, falls schmaler oder breiter gewünscht */
+      height: 600px;       /* fixe Höhe; kann auch in vh/px gemischt werden */
+      margin: 1rem auto;   /* zentriert */
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    /* Flex für Hauptbereich */
+    main {
+      padding: 1rem;
+    }
   </style>
-  <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZvGocBAsVTSOcAe_Qe2Kx8tF83BeN4U4&callback=initMap" defer></script>
 </head>
 <body>
-  <div class="banner"></div>
-  <div class="main-wrapper">
-    <nav>
-      <h1>HeimHunger 🍲</h1>
-      <div id="greeting"></div>
-      <div id="sidebar-links"></div>
-    </nav>
-    <main>
-      <h2>🍽️ Entdecke frische, heimische Gerichte</h2>
-      <div class="filters">
-        <input type="text" id="searchInput" placeholder="Ort oder Gericht suchen..." />
-        <select id="sortSelect">
-          <option value="name">Sortieren nach Name</option>
-          <option value="price">Sortieren nach Preis</option>
-          <option value="pickup_time">Sortieren nach Zeit</option>
-        </select>
-      </div>
-      <div class="meal-list" id="mealList"></div>
+  <!-- Banner -->
+  <header>
+    <h1>HeimHunger</h1>
+  </header>
 
-      <h2>🔥 Top-Gerichte der Woche</h2>
-      <div class="top-meals">
-        <div class="card"><img src="https://www.kochform.de/ab/rezepte/1026/Maultaschenpfanne_LB1.jpg" alt="Maultaschen"><div>Maultaschen geschmelzt</div></div>
-        <div class="card"><img src="https://image.essen-und-trinken.de/11916862/t/qM/v8/w1440/r1/-/sauerbraten-a9bb7109a5987231f2dc9fa1e251149d-et2012110921-jpg--6089-.jpg" alt="Sauerbraten"><div>Sauerbraten mit Rotkohl & Klößen</div></div>
-        <div class="card"><img src="https://d3sogz1xcg542t.cloudfront.net/media/image/dd/34/fa/Bratwurst-mit-Sauerkraut-und-Kartoffelstampf-4-3_1920x1920.jpg" alt="Bratwurst"><div>Bratwurst mit Sauerkraut</div></div>
-      </div>
+  <!-- Sidebar -->
+  <nav id="sidebar">
+    <ul id="nav-links">
+      <!-- wird per JS befüllt -->
+    </ul>
+  </nav>
 
-      <h2>🌍 Anbieter auf der Karte</h2>
-      <div id="map"></div>
-    </main>
-  </div>
+  <!-- Hauptinhalt -->
+  <main>
+    <h2>Gerichte entdecken</h2>
+    <div id="map-container"></div>
+  </main>
+
+  <!-- Footer -->
   <footer>
-    <p>&copy; 2025 HeimHunger – Heimisches Essen von Hobbyköchen zur Abholung.</p>
-    <p><a href="agb.html">AGB</a><a href="datenschutz.html">Datenschutz</a><a href="impressum.html">Impressum</a></p>
+    © HeimHunger 2025 — <a href="agb.html">AGB</a> • <a href="datenschutz.html">Datenschutz</a> • <a href="impressum.html">Impressum</a>
   </footer>
 
-  <script type="module">
-    import { supabase } from './supabaseClient.js';
+  <script>
+    // Supabase initialisieren
+    const SUPABASE_URL = 'https://xyz.supabase.co';
+    const SUPABASE_KEY = 'PUBLIC_ANON_KEY';
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // Session & Greeting
-    const { data: { session } } = await supabase.auth.getSession();
-    const user = session?.user;
-    document.getElementById('greeting').textContent = user
-      ? `👋 Hallo, ${user.user_metadata?.name || user.email}`
-      : '👋 Willkommen!';
-
-    // Sidebar
-    const sidebar = document.getElementById('sidebar-links');
-    sidebar.innerHTML = user
-      ? `<a href="explore.html">Gerichte entdecken</a><a href="post.html">Gericht posten</a><a href="customer.html">Mein Bereich</a><a href="agb.html">AGB</a><a href="datenschutz.html">Datenschutz</a><button id="logout">🔒 Logout</button>`
-      : `<a href="index.html">Anmelden</a><a href="explore.html">Gerichte entdecken</a><a href="agb.html">AGB</a><a href="datenschutz.html">Datenschutz</a>`;
-    if (user) document.getElementById('logout').addEventListener('click', async () => {
-      await supabase.auth.signOut(); localStorage.clear(); sessionStorage.clear(); window.location.href = 'index.html';
-    });
-
-    // Daten aus DB laden & Liste rendern
-    async function fetchMeals() {
-      let { data, error } = await supabase.from('meals').select('*');
-      if (error) { document.getElementById('mealList').innerText = 'Fehler beim Laden'; return; }
-      renderMeals(data);
+    // Auth-Status check & Sidebar befüllen
+    async function setupSidebar() {
+      const { data: { user } } = await supabase.auth.getUser();
+      const nav = document.getElementById('nav-links');
+      nav.innerHTML = '';
+      if (user) {
+        nav.innerHTML = `
+          <li><a href="post.html">Gericht posten</a></li>
+          <li><a href="customer.html">Mein Bereich</a></li>
+          <li><a href="#" id="logout">Logout</a></li>
+        `;
+        document.getElementById('logout').onclick = async () => {
+          await supabase.auth.signOut();
+          window.location.href = 'index.html';
+        };
+      } else {
+        nav.innerHTML = `
+          <li><a href="index.html">Anmelden</a></li>
+          <li><a href="explore.html">Gerichte entdecken</a></li>
+        `;
+      }
+      // immer anzeigen:
+      nav.innerHTML += `
+        <li><a href="agb.html">AGB</a></li>
+        <li><a href="datenschutz.html">Datenschutz</a></li>
+        <li><a href="impressum.html">Impressum</a></li>
+      `;
     }
-    function renderMeals(meals) {
-      const search = document.getElementById('searchInput').value.toLowerCase();
-      const sortBy = document.getElementById('sortSelect').value;
-      const filtered = meals.filter(m =>
-        m.name.toLowerCase().includes(search) || m.description.toLowerCase().includes(search)
-      ).sort((a,b) => a[sortBy] > b[sortBy] ? 1 : -1);
-      document.getElementById('mealList').innerHTML = filtered.map(m =>
-        `<div class="meal-card"><img src="${m.image_url}" alt="${m.name}" /><div class="content"><div class="title">${m.name}</div><div class="price">€ ${m.price.toFixed(2)}</div><div class="desc">${m.description}</div><div class="time">Abholung: ${new Date(m.pickup_time).toLocaleString()}</div></div></div>`
-      ).join('');
-    }
-    document.getElementById('searchInput').addEventListener('input', fetchMeals);
-    document.getElementById('sortSelect').addEventListener('change', fetchMeals);
-    fetchMeals();
 
-    // Karte initialisieren mit DB-Markern
-    window.initMap = async () => {
-      const map = new google.maps.Map(document.getElementById('map'), { zoom: 6, center: { lat: 51.1657, lng: 10.4515 } });
-      let { data: meals, error } = await supabase.from('meals').select('name,latitude,longitude');
-      if (error) return console.error('Map Load Error:', error.message);
-      meals.forEach(m => {
-        if (m.latitude && m.longitude) {
-          const marker = new google.maps.Marker({ position: { lat: m.latitude, lng: m.longitude }, map, title: m.name });
-          const info = new google.maps.InfoWindow({ content: `<strong>${m.name}</strong>` });
+    // Map & Marker laden
+    async function initMap() {
+      const map = new google.maps.Map(document.getElementById('map-container'), {
+        center: { lat: 51.1657, lng: 10.4515 }, // Mitte Deutschland
+        zoom: 6
+      });
+
+      // Datenbank-Abfrage
+      const { data: meals, error } = await supabase
+        .from('meals')
+        .select('title, description, latitude, longitude');
+
+      if (error) {
+        console.error('Database error:', error);
+        return;
+      }
+
+      meals.forEach(meal => {
+        if (meal.latitude && meal.longitude) {
+          const marker = new google.maps.Marker({
+            position: { lat: meal.latitude, lng: meal.longitude },
+            map,
+            title: meal.title
+          });
+          const info = new google.maps.InfoWindow({
+            content: `<strong>${meal.title}</strong><p>${meal.description}</p>`
+          });
           marker.addListener('click', () => info.open(map, marker));
         }
       });
-    };
+    }
+
+    // Alles starten
+    document.addEventListener('DOMContentLoaded', () => {
+      setupSidebar();
+      initMap();
+    });
   </script>
 </body>
 </html>
