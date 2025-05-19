@@ -66,6 +66,7 @@
       border: none;
       cursor: pointer;
       font-weight: bold;
+      background: #eee;
     }
     .tabs button.active {
       background-color: #a33d1e;
@@ -168,11 +169,11 @@
 
       <section id="content-post" class="tab-content active">
         <form id="mealForm">
-          <input  type="text"     id="name"         placeholder="Name des Gerichts" required />
+          <input type="text" id="name" placeholder="Name des Gerichts" required />
           <textarea id="description" placeholder="Beschreibung" rows="4" required></textarea>
-          <input  type="number"   id="price"        placeholder="Preis (€)" step="0.01" required />
-          <input  type="datetime-local" id="pickup_time" required />
-          <input  type="url"      id="image_url"    placeholder="Bild-URL" required />
+          <input type="number" id="price" placeholder="Preis (€)" step="0.01" required />
+          <input type="datetime-local" id="pickup_time" required />
+          <input type="url" id="image_url" placeholder="Bild-URL" required />
           <button type="submit">Posten</button>
           <div id="status" class="status"></div>
         </form>
@@ -212,8 +213,110 @@
 
     let currentUser = null;
 
+    // Sidebar initialisieren
     async function setupSidebar() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return window.location.replace('index.html');
       currentUser = user;
       sidebar.innerHTML = `
+        <a href="explore.html">Gerichte entdecken</a>
+        <a href="post.html">Gericht posten</a>
+        <a href="customer.html">Mein Bereich</a>
+        <button id="logout">🔒 Logout</button>
+      `;
+      document.getElementById('logout').onclick = async () => {
+        await supabase.auth.signOut();
+        window.location.replace('index.html');
+      };
+    }
+
+    // Tab-Wechsel
+    tabPost.onclick = () => {
+      tabPost.classList.add('active');
+      tabList.classList.remove('active');
+      contPost.classList.add('active');
+      contList.classList.remove('active');
+    };
+    tabList.onclick = () => {
+      tabList.classList.add('active');
+      tabPost.classList.remove('active');
+      contList.classList.add('active');
+      contPost.classList.remove('active');
+      loadMyMeals();
+    };
+
+    // Gericht posten plus Geocoding
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      statusEl.textContent = '';
+      statusEl.className = 'status';
+
+      const name = form.name.value.trim();
+      const description = form.description.value.trim();
+      const price = parseFloat(form.price.value);
+      const pickup_time = form.pickup_time.value;
+      const image_url = form.image_url.value.trim();
+      if (!name || !description || isNaN(price) || !pickup_time) {
+        statusEl.textContent = 'Bitte alle Felder korrekt ausfüllen.';
+        statusEl.classList.add('error');
+        return;
+      }
+      // Adresse aus user_metadata holen
+      const { data: { user } } = await supabase.auth.getUser();
+      const m = user.user_metadata || {};
+      const address = `${m.street||''} ${m.house_number||''}, ${m.zip||''} ${m.city||''}, ${m.country||''}`.trim();
+      try {
+        const geoRes = await fetch(
+          `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=AIzaSyAZvGocBAsVTSOcAe_Qe2Kx8tF83BeN4U4`
+        );
+        const geoJson = await geoRes.json();
+        if (geoJson.status !== 'OK') throw new Error('Adresse konnte nicht geokodiert werden');
+        const { lat, lng } = geoJson.results[0].geometry.location;
+
+        const { error } = await supabase
+          .from('meals')
+          .insert([{ name, description, price, pickup_time, image_url, latitude: lat, longitude: lng, user_id: user.id }]);
+        if (error) throw error;
+
+        statusEl.textContent = '✅ Gericht erfolgreich gepostet!';
+        statusEl.classList.add('success');
+        form.reset();
+      } catch (err) {
+        statusEl.textContent = `❌ Fehler: ${err.message}`;
+        statusEl.classList.add('error');
+      }
+    });
+
+    // Eigene Gerichte laden
+    async function loadMyMeals() {
+      myMeals.innerHTML = 'Lade…';
+      const { data, error } = await supabase
+        .from('meals')
+        .select('id,name,description,image_url,pickup_time')
+        .eq('user_id', currentUser.id)
+        .order('created_at', { ascending: false });
+      if (error) {
+        myMeals.textContent = 'Fehler beim Laden Ihrer Gerichte';
+        return;
+      }
+      if (!data.length) {
+        myMeals.textContent = 'Sie haben noch keine Gerichte gepostet.';
+        return;
+      }
+      myMeals.innerHTML = data.map(m => `
+        <div class="meal-card">
+          <img src="${m.image_url}" alt="${m.name}" />
+          <div class="content">
+            <div class="title">${m.name}</div>
+            <div class="desc">${m.description}</div>
+            <div class="time">Abholung: ${new Date(m.pickup_time).toLocaleString('de-DE')}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Initialisierung
+    await setupSidebar();
+  </script>
+</body>
+</html>
