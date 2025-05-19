@@ -48,109 +48,28 @@
       text-decoration: none;
       font-weight: bold;
     }
-    nav a:hover, nav button:hover {
-      text-decoration: underline;
-    }
-    main {
-      padding: 2rem;
-      width: 100%;
-    }
-    .tabs {
-      display: flex;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-    }
-    .tabs button {
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
-      border: none;
-      cursor: pointer;
-      font-weight: bold;
-      background: #eee;
-    }
-    .tabs button.active {
-      background-color: #a33d1e;
-      color: #fff;
-    }
-    .tab-content {
-      display: none;
-    }
-    .tab-content.active {
-      display: block;
-    }
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      max-width: 500px;
-    }
-    input, textarea {
-      padding: 0.8rem;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 1rem;
-      width: 100%;
-    }
-    button[type="submit"] {
-      background-color: #a33d1e;
-      color: white;
-      padding: 0.8rem;
-      border: none;
-      border-radius: 8px;
-      font-weight: bold;
-      cursor: pointer;
-      font-size: 1rem;
-    }
-    .status {
-      margin-top: 1rem;
-      font-size: 0.95rem;
-    }
+    nav a:hover, nav button:hover { text-decoration: underline; }
+    main { padding: 2rem; width: 100%; }
+    .tabs { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
+    .tabs button { padding: 0.5rem 1rem; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; background: #eee; }
+    .tabs button.active { background-color: #a33d1e; color: #fff; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    form { display: flex; flex-direction: column; gap: 1rem; max-width: 500px; }
+    input, textarea { padding: 0.8rem; border-radius: 8px; border: 1px solid #ccc; font-size: 1rem; width: 100%; }
+    button[type="submit"] { background-color: #a33d1e; color: white; padding: 0.8rem; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem; }
+    .status { margin-top: 1rem; font-size: 0.95rem; }
     .status.success { color: green; }
     .status.error   { color: red; }
-    .meal-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 1.5rem;
-    }
-    .meal-card {
-      background-color: white;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-    .meal-card img {
-      width: 100%;
-      height: 180px;
-      object-fit: cover;
-    }
-    .meal-card .content {
-      padding: 1rem;
-    }
-    .meal-card .title {
-      font-size: 1.2rem;
-      font-weight: bold;
-      color: #5c2b10;
-    }
-    .meal-card .desc {
-      margin-top: 0.5rem;
-      color: #5f5f5f;
-    }
-    .meal-card .time {
-      margin-top: 0.5rem;
-      font-size: 0.85rem;
-      color: #888;
-    }
-    footer {
-      background: #fff3e7;
-      padding: 1.5rem;
-      text-align: center;
-      font-size: 0.9rem;
-    }
-    footer a {
-      margin: 0 1rem;
-      color: #7a2e0b;
-      text-decoration: none;
-    }
+    .meal-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+    .meal-card { background-color: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .meal-card img { width: 100%; height: 180px; object-fit: cover; }
+    .meal-card .content { padding: 1rem; }
+    .meal-card .title { font-size: 1.2rem; font-weight: bold; color: #5c2b10; }
+    .meal-card .desc { margin-top: 0.5rem; color: #5f5f5f; }
+    .meal-card .time { margin-top: 0.5rem; font-size: 0.85rem; color: #888; }
+    footer { background: #fff3e7; padding: 1.5rem; text-align: center; font-size: 0.9rem; }
+    footer a { margin: 0 1rem; color: #7a2e0b; text-decoration: none; }
   </style>
   <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZvGocBAsVTSOcAe_Qe2Kx8tF83BeN4U4"></script>
 </head>
@@ -166,7 +85,6 @@
         <button id="tab-post" class="active">Neues Gericht</button>
         <button id="tab-list">Meine Gerichte</button>
       </div>
-
       <section id="content-post" class="tab-content active">
         <form id="mealForm">
           <input type="text" id="name" placeholder="Name des Gerichts" required />
@@ -178,7 +96,6 @@
           <div id="status" class="status"></div>
         </form>
       </section>
-
       <section id="content-list" class="tab-content">
         <div class="meal-list" id="myMeals"></div>
       </section>
@@ -193,31 +110,33 @@
       <a href="impressum.html">Impressum</a>
     </p>
   </footer>
-
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-
     const supabase = createClient(
       'https://qqhrtpbazuupayhvelrm.supabase.co',
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxaHJ0cGJhenV1cGF5aHZlbHJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjEyODgsImV4cCI6MjA2Mjc5NzI4OH0.wuT6wBQByGUwoUYyWE0cGBETE3AH2H5fYPYYFfSvznw'
     );
-
     const sidebar = document.getElementById('sidebar-links');
     const statusEl = document.getElementById('status');
-    const form     = document.getElementById('mealForm');
-    const tabPost  = document.getElementById('tab-post');
-    const tabList  = document.getElementById('tab-list');
+    const form = document.getElementById('mealForm');
+    const tabPost = document.getElementById('tab-post');
+    const tabList = document.getElementById('tab-list');
     const contPost = document.getElementById('content-post');
     const contList = document.getElementById('content-list');
-    const myMeals  = document.getElementById('myMeals');
-
+    const myMeals = document.getElementById('myMeals');
     let currentUser = null;
-
-    // Sidebar initialisieren
-    async function setupSidebar() {
-      const { data: { user } } = await supabase.auth.getUser();
+    async function init() {
+      const { data: { session } } = await supabase.auth.getSession();
+      const user = session?.user;
       if (!user) return window.location.replace('index.html');
       currentUser = user;
+      supabase.auth.onAuthStateChange((_, s) => {
+        if (!s?.user) window.location.replace('index.html');
+      });
+      renderSidebar(user);
+      setupTabs();
+    }
+    function renderSidebar(user) {
       sidebar.innerHTML = `
         <a href="explore.html">Gerichte entdecken</a>
         <a href="post.html">Gericht posten</a>
@@ -226,31 +145,23 @@
       `;
       document.getElementById('logout').onclick = async () => {
         await supabase.auth.signOut();
-        window.location.replace('index.html');
       };
     }
-
-    // Tab-Wechsel
-    tabPost.onclick = () => {
-      tabPost.classList.add('active');
-      tabList.classList.remove('active');
-      contPost.classList.add('active');
-      contList.classList.remove('active');
-    };
-    tabList.onclick = () => {
-      tabList.classList.add('active');
-      tabPost.classList.remove('active');
-      contList.classList.add('active');
-      contPost.classList.remove('active');
-      loadMyMeals();
-    };
-
-    // Gericht posten plus Geocoding
+    function setupTabs() {
+      tabPost.onclick = () => switchTab('post');
+      tabList.onclick = () => { switchTab('list'); loadMyMeals(); };
+    }
+    function switchTab(tab) {
+      const isPost = tab === 'post';
+      tabPost.classList.toggle('active', isPost);
+      tabList.classList.toggle('active', !isPost);
+      contPost.classList.toggle('active', isPost);
+      contList.classList.toggle('active', !isPost);
+    }
     form.addEventListener('submit', async e => {
       e.preventDefault();
       statusEl.textContent = '';
       statusEl.className = 'status';
-
       const name = form.name.value.trim();
       const description = form.description.value.trim();
       const price = parseFloat(form.price.value);
@@ -258,12 +169,9 @@
       const image_url = form.image_url.value.trim();
       if (!name || !description || isNaN(price) || !pickup_time) {
         statusEl.textContent = 'Bitte alle Felder korrekt ausfüllen.';
-        statusEl.classList.add('error');
-        return;
+        statusEl.classList.add('error'); return;
       }
-      // Adresse aus user_metadata holen
-      const { data: { user } } = await supabase.auth.getUser();
-      const m = user.user_metadata || {};
+      const m = currentUser.user_metadata || {};
       const address = `${m.street||''} ${m.house_number||''}, ${m.zip||''} ${m.city||''}, ${m.country||''}`.trim();
       try {
         const geoRes = await fetch(
@@ -272,37 +180,23 @@
         const geoJson = await geoRes.json();
         if (geoJson.status !== 'OK') throw new Error('Adresse konnte nicht geokodiert werden');
         const { lat, lng } = geoJson.results[0].geometry.location;
-
-        const { error } = await supabase
-          .from('meals')
-          .insert([{ name, description, price, pickup_time, image_url, latitude: lat, longitude: lng, user_id: user.id }]);
+        const { error } = await supabase.from('meals').insert([{ name, description, price, pickup_time, image_url, latitude: lat, longitude: lng, user_id: currentUser.id }]);
         if (error) throw error;
-
         statusEl.textContent = '✅ Gericht erfolgreich gepostet!';
         statusEl.classList.add('success');
         form.reset();
+        switchTab('list');
+        loadMyMeals();
       } catch (err) {
         statusEl.textContent = `❌ Fehler: ${err.message}`;
         statusEl.classList.add('error');
       }
     });
-
-    // Eigene Gerichte laden
     async function loadMyMeals() {
       myMeals.innerHTML = 'Lade…';
-      const { data, error } = await supabase
-        .from('meals')
-        .select('id,name,description,image_url,pickup_time')
-        .eq('user_id', currentUser.id)
-        .order('created_at', { ascending: false });
-      if (error) {
-        myMeals.textContent = 'Fehler beim Laden Ihrer Gerichte';
-        return;
-      }
-      if (!data.length) {
-        myMeals.textContent = 'Sie haben noch keine Gerichte gepostet.';
-        return;
-      }
+      const { data, error } = await supabase.from('meals').select('name,description,image_url,pickup_time').eq('user_id', currentUser.id).order('created_at', { ascending: false });
+      if (error) { myMeals.textContent = 'Fehler beim Laden Ihrer Gerichte'; return; }
+      if (!data.length) { myMeals.textContent = 'Sie haben noch keine Gerichte gepostet.'; return; }
       myMeals.innerHTML = data.map(m => `
         <div class="meal-card">
           <img src="${m.image_url}" alt="${m.name}" />
@@ -314,9 +208,7 @@
         </div>
       `).join('');
     }
-
-    // Initialisierung
-    await setupSidebar();
+    init();
   </script>
 </body>
 </html>
