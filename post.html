@@ -198,24 +198,26 @@
 </div>
 
     </nav>
-    <main>
-<section id="content-post" class="tab-content active">
-        <h2>Anbieten</h2>
-        <form id="offerForm">
-          <input type="text"     id="name"         placeholder="Name des Gerichts" required />
-          <textarea id="description" placeholder="Beschreibung" rows="4" required></textarea>
-          <input type="number"   id="price"        placeholder="Preis (€)" step="0.01" required />
-          <input type="datetime-local" id="pickup_time" required />
-          <input type="url"      id="image_url"    placeholder="Bild-URL" required />
-          <button type="submit">Anbieten</button>
-          <div id="offerStatus" class="status"></div>
-        </form>
-      </section>
-<section id="content-list" class="tab-content">
-        <h2>Meine Gerichte</h2>
-        <div class="meal-list" id="myMeals"></div>
-      </section>
+    
+<main>
+  <section class="section" style="padding: 2rem;">
+    <h2 class="section-title">Anbieten</h2>
+    <form id="meal-form" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; max-width: 800px;">
+      <input type="text" id="meal-name" placeholder="Name des Gerichts" required>
+      <input type="number" id="meal-price" placeholder="Preis (€)" required>
+      <textarea id="meal-description" placeholder="Beschreibung" required style="grid-column: span 2;"></textarea>
+      <input type="datetime-local" id="meal-time" required>
+      <input type="url" id="meal-image" placeholder="Bild-URL" required>
+      <button type="submit" id="submit-meal" style="grid-column: span 2; padding: 0.5rem;">Anbieten</button>
+    </form>
+  </section>
+
+  <section class="section" style="padding: 2rem;">
+    <h2 class="section-title">Meine Gerichte</h2>
+    <div id="meal-list" class="meal-list"></div>
+  </section>
 </main>
+
   </div>
 
   <footer>
@@ -235,135 +237,5 @@
 
   <!-- Google Maps API ganz am Ende -->
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZvGocBAsVTSOcAe_Qe2Kx8tF83BeN4U4&callback=initMap" defer></script>
-<script type="module">
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-    const supabase = createClient(
-      'https://qqhrtpbazuupayhvelrm.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxaHJ0cGJhenV1cGF5aHZlbHJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjEyODgsImV4cCI6MjA2Mjc5NzI4OH0.wuT6wBQByGUwoUYyWE0cGBETE3AH2H5fYPYYFfSvznw'
-    );
-
-    const sidebar     = document.getElementById('sidebar-links');
-    const contPost    = document.getElementById('content-post');
-    const contList    = document.getElementById('content-list');
-    const contMarket  = document.getElementById('content-market');
-    const myMeals     = document.getElementById('myMeals');
-    const marketMeals = document.getElementById('marketMeals');
-    const offerForm   = document.getElementById('offerForm');
-    const offerStatus = document.getElementById('offerStatus');
-
-    // Fake-Daten
-    const FAKE_MY_MEALS = [];
-    const FAKE_MARKET = [
-      { name: 'Currywurst Deluxe', description: 'Mit Pommes',          image_url: 'https://via.placeholder.com/400x300?text=Currywurst', pickup_time: '2025-06-06T17:00' },
-      { name: 'Rouladen',          description: 'Mit Rotkohl',         image_url: 'https://via.placeholder.com/400x300?text=Rouladen',    pickup_time: '2025-06-07T18:00' },
-      { name: 'Spätzle',           description: 'Hausgemacht',         image_url: 'https://via.placeholder.com/400x300?text=Spätzle',     pickup_time: '2025-06-08T19:00' },
-      { name: 'Schweinebraten',    description: 'Mit Knödeln',         image_url: 'https://via.placeholder.com/400x300?text=Braten',      pickup_time: '2025-06-09T20:00' },
-      { name: 'Bienenstich',       description: 'Süße Nachspeise',      image_url: 'https://via.placeholder.com/400x300?text=Bienenstich', pickup_time: '2025-06-10T21:00' }
-    ];
-    const FAKE_PLACES = [
-      { lat:48.7758, lng:9.1829 },
-      { lat:52.52,   lng:13.4050 },
-      { lat:50.1109, lng:8.6821 },
-      { lat:51.2277, lng:6.7735 },
-      { lat:53.5511, lng:9.9937 }
-    ];
-
-    async function init() {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user) return window.location.replace('index.html');
-      supabase.auth.onAuthStateChange((_,s) => { if (!s?.user) window.location.replace('index.html'); });
-      renderSidebar();
-      switchTab('post');
-      loadMarket();
-      loadMyMeals();
-    }
-
-    function renderSidebar() {
-      sidebar.innerHTML = `
-        <a href="explore.html">Gerichte entdecken</a>
-        <a href="customer.html">Mein Bereich</a>
-        <hr/>
-        <button id="link-post">Anbieten</button>
-        <button id="link-my">Meine Gerichte</button>
-        <button id="link-market">Gerichte Marktplatz</button>
-        <hr/>
-        <button id="logout">🔒 Logout</button>
-      `;
-      document.getElementById('logout').onclick    = async () => { await supabase.auth.signOut(); };
-      document.getElementById('link-post').onclick   = () => switchTab('post');
-      document.getElementById('link-my').onclick     = () => { switchTab('list'); loadMyMeals(); };
-      document.getElementById('link-market').onclick = () => { switchTab('market'); loadMarket(); };
-    }
-
-    function switchTab(tab) {
-      contPost.classList.toggle('active', tab === 'post');
-      contList.classList.toggle('active', tab === 'list');
-      contMarket.classList.toggle('active', tab === 'market');
-    }
-
-    // Formular-Verarbeitung
-    offerForm.addEventListener('submit', e => {
-      e.preventDefault();
-      offerStatus.textContent = '';
-      offerStatus.className = 'status';
-
-      const name        = offerForm.name.value.trim();
-      const description = offerForm.description.value.trim();
-      const price       = parseFloat(offerForm.price.value);
-      const pickup_time = offerForm.pickup_time.value;
-      const image_url   = offerForm.image_url.value.trim();
-
-      if (!name || !description || isNaN(price) || !pickup_time || !image_url) {
-        offerStatus.textContent = 'Bitte alle Felder korrekt ausfüllen.';
-        return offerStatus.classList.add('error');
-      }
-
-      // Neuen Eintrag hinzufügen und UI aktualisieren
-      FAKE_MY_MEALS.unshift({ name, description, image_url, pickup_time });
-      offerStatus.textContent = '✅ Gericht hinzugefügt!';
-      offerStatus.classList.add('success');
-      offerForm.reset();
-      switchTab('list');
-      loadMyMeals();
-    });
-
-    function loadMyMeals() {
-      myMeals.innerHTML = FAKE_MY_MEALS.map(m => `
-        <div class="meal-card">
-          <span class="star">★</span>
-          <img src="${m.image_url}" alt="${m.name}"/>
-          <div class="content">
-            <div class="title">${m.name}</div>
-            <div class="desc">${m.description}</div>
-            <div class="time">Abholung: ${new Date(m.pickup_time).toLocaleString('de-DE')}</div>
-          </div>
-        </div>
-      `).join('') || '<p>Keine Gerichte vorhanden.</p>';
-    }
-
-    function loadMarket() {
-      marketMeals.innerHTML = FAKE_MARKET.map(m => `
-        <div class="meal-card">
-          <img src="${m.image_url}" alt="${m.name}"/>
-          <div class="content">
-            <div class="title">${m.name}</div>
-            <div class="desc">${m.description}</div>
-            <div class="time">Abholung: ${new Date(m.pickup_time).toLocaleString('de-DE')}</div>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    window.initMap = () => {
-      const map = new google.maps.Map(document.getElementById('map'), {
-        center: { lat: 51.1657, lng: 10.4515 }, zoom: 6
-      });
-      FAKE_PLACES.forEach(pos =>
-        new google.maps.Marker({ position: pos, map })
-      );
-    };
-
-    init();
-  </script>
 </body>
 </html>
