@@ -4,10 +4,14 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>HeimHunger – Gerichte Marktplatz</title>
+
+  <!-- Poppins Font -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- Main Styles -->
   <link rel="stylesheet" href="style.css" />
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 </head>
+
 <body>
   <div class="banner"></div>
   <div class="main-wrapper">
@@ -21,6 +25,17 @@
       <div class="meal-list" id="mealList"></div>
     </main>
   </div>
+
+  <footer>
+    <p>&copy; 2025 HeimHunger – Heimisches Essen von Hobbyköchen zur Abholung.</p>
+    <p>
+      <a href="marktplatz.html">Marktplatz</a>
+      <a href="customer.html">Mein Bereich</a>
+      <a href="agb.html">AGB</a>
+      <a href="datenschutz.html">Datenschutz</a>
+      <a href="impressum.html">Impressum</a>
+    </p>
+  </footer>
 
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
@@ -46,10 +61,10 @@
       }
       links += `
         <hr/>
-        <a href="post.html">Anbieten</a>
+        <a href="post.html">Gericht posten</a>
         <a href="customer.html">Mein Bereich</a>
         <hr/>
-        <a href="explore.html">Gerichte entdecken</a>
+        <a href="marktplatz.html">Marktplatz</a>
         <a href="agb.html">AGB</a>
         <a href="datenschutz.html">Datenschutz</a>
         <a href="impressum.html">Impressum</a>
@@ -63,71 +78,6 @@
       }
     }
 
-    async function fetchMeals() {
-      const { data: meals, error } = await supabase
-        .from('meals')
-        .select('name,description,image_url,price,pickup_time,latitude,longitude');
-      if (error) {
-        document.getElementById('mealList').textContent = 'Fehler beim Laden der Gerichte';
-        return [];
-      }
-      renderMeals(meals);
-      return meals;
-    }
-
-    function renderMeals(meals) {
-      const container = document.getElementById('mealList');
-      const search = document.getElementById('searchInput').value.toLowerCase();
-      const sortBy = document.getElementById('sortSelect').value;
-      const filtered = meals
-        .filter(m =>
-          m.name.toLowerCase().includes(search) ||
-          m.description.toLowerCase().includes(search)
-        )
-        .sort((a, b) => a[sortBy] > b[sortBy] ? 1 : -1);
-      container.innerHTML = filtered.map(m => `
-        <div class="meal-card">
-          <img src="${m.image_url}" alt="${m.name}">
-          <div class="content">
-            <div class="title">${m.name}</div>
-            <div class="price">€ ${m.price.toFixed(2)}</div>
-            <div class="desc">${m.description}</div>
-            <div class="time">Abholung: ${new Date(m.pickup_time).toLocaleString('de-DE')}</div>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    document.getElementById('searchInput').addEventListener('input', fetchMeals);
-    document.getElementById('sortSelect').addEventListener('change', fetchMeals);
-
-    window.initMap = async () => {
-      const meals = await fetchMeals();
-      const map = new google.maps.Map(document.getElementById('map'), {
-        center: { lat: 51.1657, lng: 10.4515 },
-        zoom: 6
-      });
-      meals.forEach(m => {
-        if (m.latitude && m.longitude) {
-          const marker = new google.maps.Marker({
-            position: { lat: m.latitude, lng: m.longitude },
-            map, title: m.name
-          });
-          const info = new google.maps.InfoWindow({
-            content: `<strong>${m.name}</strong><br>${m.description}`
-          });
-          marker.addListener('click', () => info.open(map, marker));
-        }
-      });
-    };
-
-    document.addEventListener('DOMContentLoaded', () => {
-      setupSidebar();
-      fetchMeals();
-    });
-  </script>
-
-  <script>
     function renderMeals(meals) {
       const container = document.getElementById('mealList');
       if (!meals || meals.length === 0) {
@@ -152,10 +102,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', async () => {
-      const supabase = window.supabase || createClient(
-        'https://qqhrtpbazuupayhvelrm.supabase.co',
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxaHJ0cGJhenV1cGF5aHZlbHJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjEyODgsImV4cCI6MjA2Mjc5NzI4OH0.wuT6wBQByGUwoUYyWE0cGBETE3AH2H5fYPYYFfSvznw'
-      );
+      await setupSidebar();
       const { data: meals, error } = await supabase
         .from('meals')
         .select('name,description,image_url,pickup_time');
