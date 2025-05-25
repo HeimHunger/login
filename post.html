@@ -192,7 +192,8 @@
   <a href="post.html">Anbieten</a>
   <a href="customer.html">Mein Bereich</a>
   <hr/>
-  <a href="agb.html">AGB</a>
+  <a href="marktplatz.html">Marktplatz</a>
+<a href="agb.html">AGB</a>
   <a href="datenschutz.html">Datenschutz</a>
   <a href="impressum.html">Impressum</a>
 </div>
@@ -200,22 +201,32 @@
     </nav>
     
 <main>
-  <section class="section" style="padding: 2rem;">
-    <h2 class="section-title">Anbieten</h2>
-    <form id="meal-form" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; max-width: 800px;">
-      <input type="text" id="meal-name" placeholder="Name des Gerichts" required>
-      <input type="number" id="meal-price" placeholder="Preis (€)" required>
-      <textarea id="meal-description" placeholder="Beschreibung" required style="grid-column: span 2;"></textarea>
-      <input type="datetime-local" id="meal-time" required>
-      <input type="url" id="meal-image" placeholder="Bild-URL" required>
-      <button type="submit" id="submit-meal" style="grid-column: span 2; padding: 0.5rem;">Anbieten</button>
-    </form>
-  </section>
 
-  <section class="section" style="padding: 2rem;">
-    <h2 class="section-title">Meine Gerichte</h2>
-    <div id="meal-list" class="meal-list"></div>
-  </section>
+<section class="section" style="padding: 2rem;">
+  <h2 class="section-title">Anbieten</h2>
+  <div class="meal-card" style="max-width: 700px; margin: auto;">
+    <form id="meal-form" style="display: flex; flex-direction: column; gap: 1rem;">
+      <input type="text" id="meal-name" placeholder="Name des Gerichts" required style="padding: 0.75rem; border-radius: 10px; border: 1px solid #ccc;">
+      <input type="number" id="meal-price" placeholder="Preis (€)" required style="padding: 0.75rem; border-radius: 10px; border: 1px solid #ccc;">
+      <textarea id="meal-description" placeholder="Beschreibung" required style="padding: 0.75rem; border-radius: 10px; border: 1px solid #ccc;"></textarea>
+      <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+        <input type="datetime-local" id="meal-time" required style="flex: 1; padding: 0.75rem; border-radius: 10px; border: 1px solid #ccc;">
+        <input type="url" id="meal-image" placeholder="Bild-URL" required style="flex: 2; padding: 0.75rem; border-radius: 10px; border: 1px solid #ccc;">
+      </div>
+      <button type="submit" id="submit-meal"
+        style="padding: 0.85rem; border-radius: 12px; background-color: #ff8552; color: white; font-weight: bold; border: none; cursor: pointer; transition: background 0.3s;">
+        🍲 Gericht anbieten
+      </button>
+    </form>
+  </div>
+</section>
+
+
+<section class="section" style="padding: 2rem;">
+  <h2 class="section-title">Meine Gerichte</h2>
+  <div id="meal-list" class="meal-list"></div>
+</section>
+
 </main>
 
   </div>
