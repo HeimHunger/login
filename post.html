@@ -248,5 +248,47 @@
 
   <!-- Google Maps API ganz am Ende -->
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZvGocBAsVTSOcAe_Qe2Kx8tF83BeN4U4&callback=initMap" defer></script>
+
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+  const supabase = createClient(
+    'https://qqhrtpbazuupayhvelrm.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxaHJ0cGJhenV1cGF5aHZlbHJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjEyODgsImV4cCI6MjA2Mjc5NzI4OH0.wuT6wBQByGUwoUYyWE0cGBETE3AH2H5fYPYYFfSvznw'
+  );
+
+  const form = document.querySelector("form");
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const name = document.getElementById("gericht-name").value;
+    const beschreibung = document.getElementById("gericht-beschreibung").value;
+    const preis = parseFloat(document.getElementById("gericht-preis").value);
+    const bild = document.getElementById("gericht-bild").value;
+
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      alert("Du musst eingeloggt sein, um ein Gericht zu posten.");
+      return;
+    }
+
+    const { error } = await supabase.from("meals").insert([{
+      name,
+      description: beschreibung,
+      price: preis,
+      image_url: bild,
+      user_id: user.id
+    }]);
+
+    if (error) {
+      alert("Fehler beim Speichern: " + error.message);
+    } else {
+      alert("Gericht erfolgreich gespeichert!");
+      form.reset();
+    }
+  });
+</script>
+
 </body>
 </html>
