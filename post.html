@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>HeimHunger – Anbieter & Marktplatz</title>
+  <title>HeimHunger – Gerichte Marktplatz</title>
 
-  <!-- Google Font -->
+  <!-- Poppins Font -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
   <style>
@@ -16,9 +16,8 @@
       --card-bg: #ffffff;
       --border: #e0d5c8;
     }
-    * { box-sizing: border-box; }
+    * { box-sizing: border-box; margin: 0; padding: 0 }
     body {
-      margin: 0;
       font-family: 'Poppins', sans-serif;
       background-color: var(--bg-light);
       color: var(--text-dark);
@@ -35,182 +34,172 @@
       display: flex;
       flex: 1;
     }
+
+    /* Sidebar identical to post.html */
     nav {
       width: 220px;
       background-color: var(--card-bg);
       padding: 2rem 1rem;
       box-shadow: 2px 0 8px rgba(0,0,0,0.05);
+      flex-shrink: 0;
     }
     nav h1 {
-      font-size: 1.8rem;
-      margin-bottom: 1.5rem;
-      color: var(--primary);
-    }
-    nav a, nav button {
-      display: block;
-      margin: 0.75rem 0;
-      color: var(--text-dark);
-      text-decoration: none;
-      font-weight: 600;
-      background: none;
-      border: none;
-      cursor: pointer;
-    }
-    nav a:hover, nav button:hover { text-decoration: underline; }
-
-    main {
-      padding: 2rem;
-      width: 100%;
-    }
-    .tab-content {
-      display: none;
-    }
-    .tab-content.active {
-      display: block;
-    }
-
-    /* Formular-Container */
-    #content-post {
-      background: var(--card-bg);
-      padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-      max-width: 800px;
-      margin-bottom: 2rem;
-    }
-    #content-post h2 {
-      margin-top: 0;
       font-size: 1.6rem;
       color: var(--primary);
+      margin-bottom: 2rem;
+      text-align: center;
     }
-    form {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      margin-top: 1rem;
-    }
-    form input,
-    form textarea {
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 0.75rem 1rem;
-      font-size: 1rem;
-      font-family: inherit;
+    nav a,
+    nav button {
+      display: block;
+      padding: 0.75rem;
+      margin: 0.75rem 0;
+      font-weight: 600;
       color: var(--text-dark);
-      outline: none;
-      flex: 1 1 calc(50% - 1rem);
-      transition: border-color 0.2s;
-    }
-    form input:focus,
-    form textarea:focus {
-      border-color: var(--primary);
-    }
-    form textarea {
-      flex: 1 1 100%;
-      min-height: 120px;
-      resize: vertical;
-    }
-    form button {
-      background-color: var(--primary);
-      color: white;
+      text-decoration: none;
+      background: none;
       border: none;
       border-radius: 8px;
-      padding: 0.8rem 1.5rem;
-      font-size: 1rem;
-      font-weight: 600;
       cursor: pointer;
-      transition: background-color 0.2s;
-      flex: 1 1 100%;
-      max-width: 200px;
-      margin-top: 0.5rem;
+      transition: background 0.2s, color 0.2s;
+      text-align: left;
     }
-    form button:hover {
-      background-color: #8c3218;
+    nav a:hover,
+    nav button:hover {
+      background-color: var(--primary);
+      color: white;
     }
-    .status {
-      margin-top: 0.5rem;
-      font-size: 0.95rem;
-    }
-    .status.success { color: green; }
-    .status.error   { color: red; }
 
-    /* Meal Lists */
-    .meal-list {
+    main {
+      flex: 1;
+      padding: 2rem;
+    }
+    .user-greeting {
+      text-align: right;
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+    h2.section-title {
+      font-size: 1.5rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+    .filters {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .filters input,
+    .filters select {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .filters input:focus,
+    .filters select:focus {
+      border-color: var(--primary);
+    }
+    .meal-list,
+    .top-meals {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
       gap: 1.5rem;
       margin-bottom: 2rem;
     }
-    .meal-card {
-      position: relative;
+    .meal-card,
+    .top-meals .card {
       background-color: var(--card-bg);
       border-radius: 12px;
       overflow: hidden;
       box-shadow: 0 2px 8px rgba(0,0,0,0.06);
       transition: transform 0.2s;
     }
-    .meal-card:hover {
+    .meal-card:hover,
+    .top-meals .card:hover {
       transform: translateY(-4px);
     }
-    .meal-card img {
+    .meal-card img,
+    .top-meals img {
       width: 100%;
       height: 160px;
       object-fit: cover;
     }
-    .meal-card .content {
+    .meal-card .content,
+    .top-meals .card div {
       padding: 1rem;
     }
-    .meal-card .title {
+    .title {
       font-size: 1.1rem;
       font-weight: 600;
-      margin: 0;
-      color: var(--text-dark);
+      margin-bottom: 0.5rem;
     }
-    .meal-card .desc {
+    .price {
+      color: var(--primary);
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    .desc {
       font-size: 0.95rem;
       color: #555;
-      margin: 0.5rem 0;
+      margin-bottom: 0.5rem;
     }
-    .meal-card .time {
-      font-size: 0.9rem;
+    .time {
+      font-size: 0.85rem;
       color: #888;
     }
-    .meal-card .star {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      font-size: 1.4rem;
-      color: gold;
+    #map {
+      width: 100%;
+      max-width: 900px;
+      height: 320px;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
     }
 
-    /* Footer */
+    /* Footer identical to post.html */
     footer {
-      background: var(--card-bg);
+      background-color: var(--card-bg);
       padding: 1.5rem;
       text-align: center;
       font-size: 0.9rem;
       border-top: 1px solid var(--border);
     }
     footer a {
-      margin: 0 0.5rem;
+      margin: 0 1rem;
       color: var(--text-dark);
       text-decoration: none;
+      font-weight: 600;
     }
     footer a:hover {
-      text-decoration: underline;
+      color: var(--primary);
     }
   </style>
 </head>
+
 <body>
   <div class="banner"></div>
   <div class="main-wrapper">
     <nav>
       <h1>HeimHunger 🍲</h1>
-      <div id="sidebar-links"></div>
+      
+<div id="sidebar-links">
+  <button id="logout">🔒 Logout</button>
+  <hr/>
+  <a href="post.html">Anbieten</a>
+  <a href="customer.html">Mein Bereich</a>
+  <hr/>
+  <a href="agb.html">AGB</a>
+  <a href="datenschutz.html">Datenschutz</a>
+  <a href="impressum.html">Impressum</a>
+</div>
+
     </nav>
     <main>
-      <!-- Anbieten -->
-      <section id="content-post" class="tab-content active">
+<section id="content-post" class="tab-content active">
         <h2>Anbieten</h2>
         <form id="offerForm">
           <input type="text"     id="name"         placeholder="Name des Gerichts" required />
@@ -222,24 +211,15 @@
           <div id="offerStatus" class="status"></div>
         </form>
       </section>
-
-      <!-- Meine Gerichte -->
-      <section id="content-list" class="tab-content">
+<section id="content-list" class="tab-content">
         <h2>Meine Gerichte</h2>
         <div class="meal-list" id="myMeals"></div>
       </section>
-
-      <!-- Gerichte Marktplatz -->
-      <section id="content-market" class="tab-content">
-        <h2>Gerichte Marktplatz</h2>
-        <div class="meal-list" id="marketMeals"></div>
-        <div id="map"></div>
-      </section>
-    </main>
+</main>
   </div>
 
   <footer>
-    <p>&copy; 2025 HeimHunger</p>
+    <p>&copy; 2025 HeimHunger – Heimisches Essen von Hobbyköchen zur Abholung.</p>
     <p>
       <a href="explore.html">Gerichte entdecken</a>
       <a href="customer.html">Mein Bereich</a>
@@ -249,8 +229,13 @@
     </p>
   </footer>
 
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZvGocBAsVTSOcAe_Qe2Kx8tF83BeN4U4&callback=initMap"></script>
-  <script type="module">
+  
+
+
+
+  <!-- Google Maps API ganz am Ende -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZvGocBAsVTSOcAe_Qe2Kx8tF83BeN4U4&callback=initMap" defer></script>
+<script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
     const supabase = createClient(
       'https://qqhrtpbazuupayhvelrm.supabase.co',
