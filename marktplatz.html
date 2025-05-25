@@ -8,8 +8,176 @@
   <!-- Poppins Font -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
-  <!-- Main Styles -->
-  <link rel="stylesheet" href="style.css" />
+  <style>
+    :root {
+      --primary: #a33d1e;
+      --bg-light: #fce9dc;
+      --text-dark: #3b1f0b;
+      --card-bg: #ffffff;
+      --border: #e0d5c8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0 }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--bg-light);
+      color: var(--text-dark);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    .banner {
+      background: url('https://wallpapers.com/images/featured/food-4k-1pf6px6ryqfjtnyr.jpg') center/cover no-repeat;
+      height: 200px;
+      width: 100%;
+    }
+    .main-wrapper {
+      display: flex;
+      flex: 1;
+    }
+
+    /* Sidebar identical to post.html */
+    nav {
+      width: 220px;
+      background-color: var(--card-bg);
+      padding: 2rem 1rem;
+      box-shadow: 2px 0 8px rgba(0,0,0,0.05);
+      flex-shrink: 0;
+    }
+    nav h1 {
+      font-size: 1.6rem;
+      color: var(--primary);
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+    nav a,
+    nav button {
+      display: block;
+      padding: 0.75rem;
+      margin: 0.75rem 0;
+      font-weight: 600;
+      color: var(--text-dark);
+      text-decoration: none;
+      background: none;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      text-align: left;
+    }
+    nav a:hover,
+    nav button:hover {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    main {
+      flex: 1;
+      padding: 2rem;
+    }
+    .user-greeting {
+      text-align: right;
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+    h2.section-title {
+      font-size: 1.5rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+    .filters {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .filters input,
+    .filters select {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .filters input:focus,
+    .filters select:focus {
+      border-color: var(--primary);
+    }
+    .meal-list,
+    .top-meals {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .meal-card,
+    .top-meals .card {
+      background-color: var(--card-bg);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      transition: transform 0.2s;
+    }
+    .meal-card:hover,
+    .top-meals .card:hover {
+      transform: translateY(-4px);
+    }
+    .meal-card img,
+    .top-meals img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+    }
+    .meal-card .content,
+    .top-meals .card div {
+      padding: 1rem;
+    }
+    .title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    .price {
+      color: var(--primary);
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    .desc {
+      font-size: 0.95rem;
+      color: #555;
+      margin-bottom: 0.5rem;
+    }
+    .time {
+      font-size: 0.85rem;
+      color: #888;
+    }
+    #map {
+      width: 100%;
+      max-width: 900px;
+      height: 320px;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    /* Footer identical to post.html */
+    footer {
+      background-color: var(--card-bg);
+      padding: 1.5rem;
+      text-align: center;
+      font-size: 0.9rem;
+      border-top: 1px solid var(--border);
+    }
+    footer a {
+      margin: 0 1rem;
+      color: var(--text-dark);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    footer a:hover {
+      color: var(--primary);
+    }
+  </style>
 </head>
 
 <body>
@@ -21,15 +189,44 @@
     </nav>
     <main>
       <div class="user-greeting" id="greeting"></div>
+
       <h2 class="section-title">Gerichte Marktplatz</h2>
+      <div class="filters">
+        <input type="text" id="searchInput" placeholder="Ort oder Gericht suchen…"/>
+        <select id="sortSelect">
+          <option value="name">Sortieren nach Name</option>
+          <option value="price">Sortieren nach Preis</option>
+          <option value="pickup_time">Sortieren nach Zeit</option>
+        </select>
+      </div>
+
       <div class="meal-list" id="mealList"></div>
+
+      <h2 class="section-title">🔥 Top-Gerichte der Woche</h2>
+      <div class="top-meals">
+        <div class="card">
+          <img src="https://via.placeholder.com/400x300?text=Maultaschen" alt="Maultaschen">
+          <div><strong>Maultaschen geschmelzt</strong><br>Hausgemacht mit Zwiebeln & Salat</div>
+        </div>
+        <div class="card">
+          <img src="https://via.placeholder.com/400x300?text=Sauerbraten" alt="Sauerbraten">
+          <div><strong>Sauerbraten</strong><br>Mit Rotkohl & Klößen – 100 % Oma-Rezept</div>
+        </div>
+        <div class="card">
+          <img src="https://via.placeholder.com/400x300?text=Bratwurst" alt="Bratwurst">
+          <div><strong>Bratwurst mit Sauerkraut</strong><br>Rustikal & frisch gekocht von Max</div>
+        </div>
+      </div>
+
+      <h2 class="section-title">🌍 Anbieter auf der Karte</h2>
+      <div id="map"></div>
     </main>
   </div>
 
   <footer>
     <p>&copy; 2025 HeimHunger – Heimisches Essen von Hobbyköchen zur Abholung.</p>
     <p>
-      <a href="marktplatz.html">Marktplatz</a>
+      <a href="explore.html">Gerichte entdecken</a>
       <a href="customer.html">Mein Bereich</a>
       <a href="agb.html">AGB</a>
       <a href="datenschutz.html">Datenschutz</a>
@@ -37,7 +234,33 @@
     </p>
   </footer>
 
-  <script type="module">
+  
+<script type="module">
+
+function renderMeals(meals) {
+  const container = document.getElementById('mealList');
+  if (!meals || meals.length === 0) {
+    meals = [
+      { name: "Currywurst Deluxe", description: "Mit Pommes", image_url: "https://via.placeholder.com/400x300?text=Currywurst", pickup_time: "2025-06-06T17:00:00" },
+      { name: "Rouladen", description: "Mit Rotkohl", image_url: "https://via.placeholder.com/400x300?text=Rouladen", pickup_time: "2025-06-07T18:00:00" },
+      { name: "Spätzle", description: "Hausgemacht", image_url: "https://via.placeholder.com/400x300?text=Spätzle", pickup_time: "2025-06-08T19:00:00" },
+      { name: "Schweinebraten", description: "Mit Knödeln", image_url: "https://via.placeholder.com/400x300?text=Schweinebraten", pickup_time: "2025-06-09T20:00:00" },
+      { name: "Bienenstich", description: "Süße Nachspeise", image_url: "https://via.placeholder.com/400x300?text=Bienenstich", pickup_time: "2025-06-10T21:00:00" },
+    ];
+  }
+  container.innerHTML = meals.map(m => `
+    <div class="meal-card">
+      <img src="${m.image_url}" alt="${m.name}">
+      <div class="content">
+        <div class="title">${m.name}</div>
+        <div class="desc">${m.description}</div>
+        <div class="time">Abholung: ${new Date(m.pickup_time).toLocaleString('de-DE')}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
     const supabase = createClient(
       'https://qqhrtpbazuupayhvelrm.supabase.co',
@@ -61,10 +284,10 @@
       }
       links += `
         <hr/>
-        <a href="post.html">Gericht posten</a>
+        <a href="post.html">Anbieten</a>
         <a href="customer.html">Mein Bereich</a>
         <hr/>
-        <a href="marktplatz.html">Marktplatz</a>
+        <a href="explore.html">Gerichte entdecken</a>
         <a href="agb.html">AGB</a>
         <a href="datenschutz.html">Datenschutz</a>
         <a href="impressum.html">Impressum</a>
@@ -78,36 +301,81 @@
       }
     }
 
+    async function fetchMeals() {
+      const { data: meals, error } = await supabase
+        .from('meals')
+        .select('name,description,image_url,price,pickup_time,latitude,longitude');
+      if (error) {
+        document.getElementById('mealList').textContent = 'Fehler beim Laden der Gerichte';
+        return [];
+      }
+      renderMeals(meals);
+      return meals;
+    }
+
     function renderMeals(meals) {
       const container = document.getElementById('mealList');
-      if (!meals || meals.length === 0) {
-        meals = [
-          { name: "Currywurst Deluxe", description: "Mit Pommes", image_url: "https://via.placeholder.com/400x300?text=Currywurst", pickup_time: "2025-06-06T17:00:00" },
-          { name: "Rouladen", description: "Mit Rotkohl", image_url: "https://via.placeholder.com/400x300?text=Rouladen", pickup_time: "2025-06-07T18:00:00" },
-          { name: "Spätzle", description: "Hausgemacht", image_url: "https://via.placeholder.com/400x300?text=Spätzle", pickup_time: "2025-06-08T19:00:00" },
-          { name: "Schweinebraten", description: "Mit Knödeln", image_url: "https://via.placeholder.com/400x300?text=Schweinebraten", pickup_time: "2025-06-09T20:00:00" },
-          { name: "Bienenstich", description: "Süße Nachspeise", image_url: "https://via.placeholder.com/400x300?text=Bienenstich", pickup_time: "2025-06-10T21:00:00" },
-        ];
-      }
-      container.innerHTML = meals.map(m => `
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      const sortBy = document.getElementById('sortSelect').value;
+      const filtered = meals
+        .filter(m =>
+          m.name.toLowerCase().includes(search) ||
+          m.description.toLowerCase().includes(search)
+        )
+        .sort((a, b) => a[sortBy] > b[sortBy] ? 1 : -1);
+      container.innerHTML = filtered.map(m => `
         <div class="meal-card">
-          <img src="\${m.image_url}" alt="\${m.name}">
+          <img src="${m.image_url}" alt="${m.name}">
           <div class="content">
-            <div class="title">\${m.name}</div>
-            <div class="desc">\${m.description}</div>
-            <div class="time">Abholung: \${new Date(m.pickup_time).toLocaleString('de-DE')}</div>
+            <div class="title">${m.name}</div>
+            <div class="price">€ ${m.price.toFixed(2)}</div>
+            <div class="desc">${m.description}</div>
+            <div class="time">Abholung: ${new Date(m.pickup_time).toLocaleString('de-DE')}</div>
           </div>
         </div>
       `).join('');
     }
 
-    document.addEventListener('DOMContentLoaded', async () => {
-      await setupSidebar();
-      const { data: meals, error } = await supabase
-        .from('meals')
-        .select('name,description,image_url,pickup_time');
-      renderMeals(meals || []);
+    document.getElementById('searchInput').addEventListener('input', fetchMeals);
+    document.getElementById('sortSelect').addEventListener('change', fetchMeals);
+
+    window.initMap = async () => {
+      const meals = await fetchMeals();
+      const map = new google.maps.Map(document.getElementById('map'), {
+        center: { lat: 51.1657, lng: 10.4515 },
+        zoom: 6
+      });
+      meals.forEach(m => {
+        if (m.latitude && m.longitude) {
+          const marker = new google.maps.Marker({
+            position: { lat: m.latitude, lng: m.longitude },
+            map, title: m.name
+          });
+          const info = new google.maps.InfoWindow({
+            content: `<strong>${m.name}</strong><br>${m.description}`
+          });
+          marker.addListener('click', () => info.open(map, marker));
+        }
+      });
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      setupSidebar();
+      fetchMeals();
     });
-  </script>
+  
+
+document.addEventListener('DOMContentLoaded', async () => {
+  await setupSidebar();
+  const { data: meals, error } = await supabase
+    .from('meals')
+    .select('name,description,image_url,price,pickup_time,latitude,longitude');
+  renderMeals(meals);
+});
+</script>
+
+
+  <!-- Google Maps API ganz am Ende -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZvGocBAsVTSOcAe_Qe2Kx8tF83BeN4U4&callback=initMap" defer></script>
 </body>
 </html>
