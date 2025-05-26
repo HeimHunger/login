@@ -254,39 +254,7 @@
 </p>
 </footer>
 <!-- Google Maps API ganz am Ende -->
-<script defer="" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZvGocBAsVTSOcAe_Qe2Kx8tF83BeN4U4&amp;callback=initMap">
-function showCheckout() {
-  document.getElementById("checkoutSection").style.display = "block";
-}
 
-function submitOrder() {
-  const name = document.getElementById("checkoutName").value;
-  const last = document.getElementById("checkoutLast").value;
-  const email = document.getElementById("checkoutEmail").value;
-
-  if (!name || !last || !email || !email.includes("@")) {
-    alert("Bitte alle Felder korrekt ausfüllen.");
-    return;
-  }
-
-  const addresses = [
-    "Musterstraße 12, 70173 Stuttgart",
-    "Hauptplatz 7, 80331 München",
-    "Am Markt 3, 50667 Köln",
-    "Bergstraße 22, 01067 Dresden",
-    "Rosenweg 9, 90402 Nürnberg"
-  ];
-  const code = Math.floor(1000 + Math.random() * 9000);
-  const randomAddress = addresses[Math.floor(Math.random() * addresses.length)];
-
-  document.getElementById("randomAddress").textContent = randomAddress;
-  document.getElementById("pickupCode").textContent = code;
-  document.getElementById("checkoutSection").style.display = "none";
-  document.getElementById("confirmationSection").style.display = "block";
-
-  console.log("E-Mail an " + email + ": Dein Abholcode ist " + code + " | Adresse: " + randomAddress);
-}
-</script>
 <div id="mealModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center;">
 <div style="background:white; border-radius:10px; padding:20px; width:90%; max-width:500px; box-shadow:0 5px 15px rgba(0,0,0,0.3); position:relative;">
 <button onclick="closeModal()" style="position:absolute; top:10px; right:10px; background:none; border:none; font-size:20px; cursor:pointer;">×</button>
@@ -316,21 +284,7 @@ function submitOrder() {
 </div>
 </div>
 </div>
-<script>
-  document.querySelectorAll('.meal-card').forEach(card => {
-    card.style.cursor = "pointer";
-    card.onclick = () => {
-      document.getElementById("modalImage").src = card.querySelector("img").src;
-      document.getElementById("modalTitle").textContent = card.querySelector(".title").textContent;
-      document.getElementById("modalDesc").textContent = card.querySelectorAll(".desc")[0].textContent + " – " + card.querySelectorAll(".desc")[1].textContent;
-      document.getElementById("modalTime").textContent = card.querySelector(".time").textContent;
-      document.getElementById("mealModal").style.display = "flex";
-    }
-  });
-  function closeModal() {
-    document.getElementById("mealModal").style.display = "none";
-  }
-</script>
+
 <div id="checkoutModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); z-index:1001; justify-content:center; align-items:center;">
 <div style="background:white; border-radius:10px; padding:20px; width:90%; max-width:500px; box-shadow:0 5px 15px rgba(0,0,0,0.3); position:relative;">
 <button onclick="document.getElementById('checkoutModal').style.display='none'" style="position:absolute; top:10px; right:10px; background:none; border:none; font-size:20px; cursor:pointer;">×</button>
@@ -342,60 +296,65 @@ function submitOrder() {
 <p id="successMessage" style="display:none; margin-top:1rem; color:green;">Bestellung erfolgreich! Eine Bestätigung wurde an deine E-Mail gesendet.</p>
 </div>
 </div>
-<script type="module">
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
-const supabase = createClient(
-  'https://qqhrtpbazuupayhvelrm.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...snw' // gekürzt für Sicherheit
-);
 
-const { data: { user } } = await supabase.auth.getUser();
-const meta = user.user_metadata;
-document.getElementById("checkoutEmail").value = user.email;
-document.getElementById("checkoutAddress").value = meta.street + " " + meta.house_number + ", " + meta.zip + " " + meta.city;
 
-function finalizeOrder() {
-  const code = Math.floor(1000 + Math.random() * 9000);
-  const address = document.getElementById("checkoutAddress").value;
-  const email = document.getElementById("checkoutEmail").value;
-  const content = `Danke für deine Bestellung! Dein Abholcode: ${code}. Abholung bei: ${address}`;
-  console.log("Fake-E-Mail an " + email + ":\n" + content);
-  document.getElementById("successMessage").style.display = "block";
-  setTimeout(() => {
-    document.getElementById("checkoutModal").style.display = "none";
-    document.getElementById("mealModal").style.display = "none";
-  }, 2000);
-}
-window.finalizeOrder = finalizeOrder;
-</script>
-<script type="module">
-<script type="module">
-  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+<script>
+  const fakeDishes = [
+    { title: 'Currywurst', img: 'https://images.unsplash.com/photo-1617196037037-f5c1393b6d03', desc: 'Würzige Currywurst mit Pommes', time: 'Heute 18:00 – 20:00' },
+    { title: 'Sauerbraten', img: 'https://images.unsplash.com/photo-1608219959307-449a96a1a8db', desc: 'Traditioneller Sauerbraten mit Rotkohl', time: 'Heute 12:00 – 14:00' },
+    { title: 'Spätzle', img: 'https://images.unsplash.com/photo-1629564972903-d1efb7f9d943', desc: 'Käsespätzle mit Röstzwiebeln', time: 'Morgen 11:00 – 13:00' }
+  ];
 
-  const supabase = createClient(
-    'https://qqhrtpbazuupayhvelrm.supabase.co',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...snw' // Gekürzt für Sicherheit
-  );
+  const grid = document.getElementById('dishGrid');
+  const modal = document.getElementById('modal');
+  const modalContent = document.getElementById('modalContent');
+  const checkoutModal = document.getElementById('checkoutModal');
 
-  document.addEventListener('DOMContentLoaded', async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    const meta = user.user_metadata || {};
-    document.getElementById("checkoutEmail").value = user.email;
-    document.getElementById("checkoutAddress").value = meta.street + " " + meta.house_number + ", " + meta.zip + " " + meta.city;
-
-    document.getElementById("submitCheckout").addEventListener("click", () => {
-      const code = Math.floor(1000 + Math.random() * 9000);
-      const email = document.getElementById("checkoutEmail").value;
-      const addr = document.getElementById("checkoutAddress").value;
-      const text = `Hallo! Deine Bestellung war erfolgreich. Abholcode: ${code}. Adresse: ${addr}`;
-      console.log("E-Mail an: " + email + "\n" + text);
-      document.getElementById("successMessage").style.display = "block";
-      setTimeout(() => {
-        document.getElementById("checkoutModal").style.display = "none";
-        document.getElementById("mealModal").style.display = "none";
-      }, 2500);
-    });
+  fakeDishes.forEach((dish, i) => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <img src="${dish.img}" alt="${dish.title}">
+      <div class="card-body">
+        <p class="card-title">${dish.title}</p>
+        <p>${dish.desc}</p>
+      </div>
+    `;
+    card.onclick = () => {
+      modalContent.innerHTML = `
+        <img src="${dish.img}" alt="${dish.title}">
+        <h2>${dish.title}</h2>
+        <p>${dish.desc}</p>
+        <p><strong>Abholzeit:</strong> ${dish.time}</p>
+        <button class="close-btn" onclick="openCheckout()">Jetzt bestellen</button>
+        <button class="close-btn" onclick="closeModal()">Schließen</button>
+      `;
+      modal.style.display = 'flex';
+    };
+    grid.appendChild(card);
   });
-</script>
+
+  function closeModal() {
+    modal.style.display = 'none';
+  }
+
+  function openCheckout() {
+    modal.style.display = 'none';
+    checkoutModal.style.display = 'flex';
+  }
+
+  function closeCheckout() {
+    checkoutModal.style.display = 'none';
+  }
+
+  function confirmOrder() {
+    const email = document.getElementById('email').value;
+    if (email.includes('@')) {
+      const code = Math.floor(1000 + Math.random() * 9000);
+      document.getElementById('confirmMessage').innerText =
+        `Bestellung erfolgreich! Bitte zeige bei Abholung den Code ${code} vor. Eine Bestätigung wurde an ${email} gesendet.`;
+      document.getElementById('confirmMessage').style.display = 'block';
+    }
+  }
 </script></body>
 </html>
