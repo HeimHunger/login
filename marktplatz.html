@@ -305,7 +305,7 @@ function submitOrder() {
 <option selected="">Barzahlung</option>
 </select>
 </label><br/><br/>
-<button onclick="submitOrder()" style="margin-top:10px; background:#28a745; color:white; border:none; padding:10px 20px; border-radius:6px; font-size:1rem; cursor:pointer;">Jetzt kostenpflichtig bestellen</button>
+<button id="submitCheckout" onclick="submitOrder()" style="margin-top:10px; background:#28a745; color:white; border:none; padding:10px 20px; border-radius:6px; font-size:1rem; cursor:pointer;">Jetzt kostenpflichtig bestellen</button>
 </div>
 <div id="confirmationSection" style="display:none; margin-top:1rem; color:green;">
 <h3>Vielen Dank für deine Bestellung!</h3>
@@ -331,5 +331,71 @@ function submitOrder() {
     document.getElementById("mealModal").style.display = "none";
   }
 </script>
-</body>
+<div id="checkoutModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); z-index:1001; justify-content:center; align-items:center;">
+<div style="background:white; border-radius:10px; padding:20px; width:90%; max-width:500px; box-shadow:0 5px 15px rgba(0,0,0,0.3); position:relative;">
+<button onclick="document.getElementById('checkoutModal').style.display='none'" style="position:absolute; top:10px; right:10px; background:none; border:none; font-size:20px; cursor:pointer;">×</button>
+<h3>Bestellung abschließen</h3>
+<label>E-Mail:<br/><input id="checkoutEmail" readonly="" style="width:100%; padding:8px; margin-top:4px; background:#eee;" type="email"/></label><br/><br/>
+<label>Adresse:<br/><input id="checkoutAddress" style="width:100%; padding:8px; margin-top:4px;" type="text"/></label><br/><br/>
+<label>Zahlung:<br/><input disabled="" style="width:100%; padding:8px; background:#eee;" value="Barzahlung"/></label><br/><br/>
+<button onclick="finalizeOrder()" style="margin-top:10px; background:#28a745; color:white; border:none; padding:10px 20px; border-radius:6px; font-size:1rem; cursor:pointer;">Jetzt kostenpflichtig bestellen</button>
+<p id="successMessage" style="display:none; margin-top:1rem; color:green;">Bestellung erfolgreich! Eine Bestätigung wurde an deine E-Mail gesendet.</p>
+</div>
+</div>
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+const supabase = createClient(
+  'https://qqhrtpbazuupayhvelrm.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...snw' // gekürzt für Sicherheit
+);
+
+const { data: { user } } = await supabase.auth.getUser();
+const meta = user.user_metadata;
+document.getElementById("checkoutEmail").value = user.email;
+document.getElementById("checkoutAddress").value = meta.street + " " + meta.house_number + ", " + meta.zip + " " + meta.city;
+
+function finalizeOrder() {
+  const code = Math.floor(1000 + Math.random() * 9000);
+  const address = document.getElementById("checkoutAddress").value;
+  const email = document.getElementById("checkoutEmail").value;
+  const content = `Danke für deine Bestellung! Dein Abholcode: ${code}. Abholung bei: ${address}`;
+  console.log("Fake-E-Mail an " + email + ":\n" + content);
+  document.getElementById("successMessage").style.display = "block";
+  setTimeout(() => {
+    document.getElementById("checkoutModal").style.display = "none";
+    document.getElementById("mealModal").style.display = "none";
+  }, 2000);
+}
+window.finalizeOrder = finalizeOrder;
+</script>
+<script type="module">
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+  const supabase = createClient(
+    'https://qqhrtpbazuupayhvelrm.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...snw' // Gekürzt für Sicherheit
+  );
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    const meta = user.user_metadata || {};
+    document.getElementById("checkoutEmail").value = user.email;
+    document.getElementById("checkoutAddress").value = meta.street + " " + meta.house_number + ", " + meta.zip + " " + meta.city;
+
+    document.getElementById("submitCheckout").addEventListener("click", () => {
+      const code = Math.floor(1000 + Math.random() * 9000);
+      const email = document.getElementById("checkoutEmail").value;
+      const addr = document.getElementById("checkoutAddress").value;
+      const text = `Hallo! Deine Bestellung war erfolgreich. Abholcode: ${code}. Adresse: ${addr}`;
+      console.log("E-Mail an: " + email + "\n" + text);
+      document.getElementById("successMessage").style.display = "block";
+      setTimeout(() => {
+        document.getElementById("checkoutModal").style.display = "none";
+        document.getElementById("mealModal").style.display = "none";
+      }, 2500);
+    });
+  });
+</script>
+</script></body>
 </html>
