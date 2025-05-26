@@ -243,10 +243,6 @@
 </main></div>
 <div class="card">
 </div>
-
-
-
-
 <footer>
 <p>© 2025 HeimHunger – Heimisches Essen von Hobbyköchen zur Abholung.</p>
 <p>
@@ -258,8 +254,39 @@
 </p>
 </footer>
 <!-- Google Maps API ganz am Ende -->
-<script defer="" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZvGocBAsVTSOcAe_Qe2Kx8tF83BeN4U4&amp;callback=initMap"></script>
+<script defer="" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZvGocBAsVTSOcAe_Qe2Kx8tF83BeN4U4&amp;callback=initMap">
+function showCheckout() {
+  document.getElementById("checkoutSection").style.display = "block";
+}
 
+function submitOrder() {
+  const name = document.getElementById("checkoutName").value;
+  const last = document.getElementById("checkoutLast").value;
+  const email = document.getElementById("checkoutEmail").value;
+
+  if (!name || !last || !email || !email.includes("@")) {
+    alert("Bitte alle Felder korrekt ausfüllen.");
+    return;
+  }
+
+  const addresses = [
+    "Musterstraße 12, 70173 Stuttgart",
+    "Hauptplatz 7, 80331 München",
+    "Am Markt 3, 50667 Köln",
+    "Bergstraße 22, 01067 Dresden",
+    "Rosenweg 9, 90402 Nürnberg"
+  ];
+  const code = Math.floor(1000 + Math.random() * 9000);
+  const randomAddress = addresses[Math.floor(Math.random() * addresses.length)];
+
+  document.getElementById("randomAddress").textContent = randomAddress;
+  document.getElementById("pickupCode").textContent = code;
+  document.getElementById("checkoutSection").style.display = "none";
+  document.getElementById("confirmationSection").style.display = "block";
+
+  console.log("E-Mail an " + email + ": Dein Abholcode ist " + code + " | Adresse: " + randomAddress);
+}
+</script>
 <div id="mealModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center;">
 <div style="background:white; border-radius:10px; padding:20px; width:90%; max-width:500px; box-shadow:0 5px 15px rgba(0,0,0,0.3); position:relative;">
 <button onclick="closeModal()" style="position:absolute; top:10px; right:10px; background:none; border:none; font-size:20px; cursor:pointer;">×</button>
@@ -267,7 +294,27 @@
 <h2 id="modalTitle" style="margin-top:1rem;"></h2>
 <p id="modalDesc" style="margin:0.5rem 0;"></p>
 <p id="modalTime" style="color:#888;"></p>
-<button style="margin-top:1rem; background:#a33d1e; color:white; border:none; padding:10px 20px; border-radius:6px; font-size:1rem; cursor:pointer;">Jetzt kaufen</button>
+<button onclick="showCheckout()" style="margin-top:1rem; background:#a33d1e; color:white; border:none; padding:10px 20px; border-radius:6px; font-size:1rem; cursor:pointer;">Jetzt kaufen</button>
+
+<div id="checkoutSection" style="display:none; margin-top:1rem;">
+<h3>Checkout</h3>
+<label>Vorname:<br/><input id="checkoutName" style="width:100%; padding:8px; margin-top:4px;" type="text"/></label><br/><br/>
+<label>Nachname:<br/><input id="checkoutLast" style="width:100%; padding:8px; margin-top:4px;" type="text"/></label><br/><br/>
+<label>E-Mail:<br/><input id="checkoutEmail" style="width:100%; padding:8px; margin-top:4px;" type="email"/></label><br/><br/>
+<label>Zahlungsart:<br/>
+<select disabled="" style="width:100%; padding:8px;">
+<option selected="">Barzahlung</option>
+</select>
+</label><br/><br/>
+<button onclick="submitOrder()" style="margin-top:10px; background:#28a745; color:white; border:none; padding:10px 20px; border-radius:6px; font-size:1rem; cursor:pointer;">Jetzt kostenpflichtig bestellen</button>
+</div>
+<div id="confirmationSection" style="display:none; margin-top:1rem; color:green;">
+<h3>Vielen Dank für deine Bestellung!</h3>
+<p>Dein Gericht wartet an folgender Adresse:</p>
+<p><strong id="randomAddress"></strong></p>
+<p>Dein Abholcode lautet: <strong id="pickupCode"></strong></p>
+<p>Wir haben dir eine Bestätigung per E-Mail geschickt.</p>
+</div>
 </div>
 </div>
 <script>
