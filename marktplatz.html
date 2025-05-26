@@ -352,28 +352,36 @@ const supabase = createClient(
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxaHJ0cGJhenV1cGF5aHZlbHJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDcyMjEyODgsImV4cCI6MjA2Mjc5NzI4OH0.wuT6wBQByGUwoUYyWE0cGBETE3AH2H5fYPYYFfSvznw'
 );
 
-document.addEventListener('DOMContentLoaded', async () => {
-  const { data: { user } } = await supabase.auth.getUser();
-  const meta = user.user_metadata || {};
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    const { data: { user }, error } = await supabase.auth.getUser();
 
-  document.getElementById("checkoutEmail").value = user.email;
-  document.getElementById("checkoutAddress").value =
-    meta.street + " " + meta.house_number + ", " + meta.zip + " " + meta.city;
+    if (!user) {
+      alert("❗ Du bist nicht eingeloggt. Bitte logge dich ein, um zu bestellen.");
+      return;
+    }
 
-  const button = document.getElementById("submitCheckout");
-  if (button) {
-    button.addEventListener("click", () => {
-      const code = Math.floor(1000 + Math.random() * 9000);
-      const email = document.getElementById("checkoutEmail").value;
-      const addr = document.getElementById("checkoutAddress").value;
-      const text = `Hallo! Deine Bestellung war erfolgreich. Abholcode: ${code}. Adresse: ${addr}`;
-      console.log("E-Mail an:", email, text);
-      document.getElementById("successMessage").style.display = "block";
-      setTimeout(() => {
-        document.getElementById("checkoutModal").style.display = "none";
-        document.getElementById("mealModal").style.display = "none";
-      }, 2500);
-    });
+    const meta = user.user_metadata || {};
+    document.getElementById("checkoutEmail").value = user.email;
+    document.getElementById("checkoutAddress").value = meta.street + " " + meta.house_number + ", " + meta.zip + " " + meta.city;
+
+    const button = document.getElementById("submitCheckout");
+    if (button) {
+      button.addEventListener("click", () => {
+        const code = Math.floor(1000 + Math.random() * 9000);
+        const email = document.getElementById("checkoutEmail").value;
+        const addr = document.getElementById("checkoutAddress").value;
+        const text = `Hallo! Deine Bestellung war erfolgreich. Abholcode: ${code}. Adresse: ${addr}`;
+        console.log("✅ E-Mail an:", email, text);
+        document.getElementById("successMessage").style.display = "block";
+        setTimeout(() => {
+          document.getElementById("checkoutModal").style.display = "none";
+          document.getElementById("mealModal").style.display = "none";
+        }, 2500);
+      });
+    }
+  } catch (err) {
+    console.error("Fehler beim Laden des Benutzers:", err);
   }
 });
 </script></body>
